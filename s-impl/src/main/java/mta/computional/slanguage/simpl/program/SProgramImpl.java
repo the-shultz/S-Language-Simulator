@@ -6,6 +6,7 @@ import mta.computional.slanguage.smodel.api.program.SProgram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SProgramImpl implements SProgram {
 
@@ -35,7 +36,10 @@ public class SProgramImpl implements SProgram {
 
     @Override
     public List<SInstruction> expand() {
-        return List.of();
+        return instructions
+                .stream()
+                .flatMap(instruction -> instruction.expand().stream())
+                .collect(Collectors.toList());
     }
 
     @Override
