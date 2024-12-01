@@ -1,4 +1,7 @@
-package mta.computional.slanguage.smodel.api;
+package mta.computional.slanguage.smodel.api.program;
+
+import mta.computional.slanguage.smodel.api.instruction.SInstruction;
+import mta.computional.slanguage.smodel.api.label.Label;
 
 import java.util.List;
 

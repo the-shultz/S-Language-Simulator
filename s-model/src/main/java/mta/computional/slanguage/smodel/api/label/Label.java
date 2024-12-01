@@ -1,18 +1,18 @@
-package mta.computional.slanguage.smodel.api;
+package mta.computional.slanguage.smodel.api.label;
 
 public interface Label {
-    String getLabel();
+    String label();
 
     Label EXIT = new Label() {
         @Override
-        public String getLabel() {
+        public String label() {
             return "EXIT";
         }
     };
 
     Label EMPTY = new Label() {
         @Override
-        public String getLabel() {
+        public String label() {
             return "EMPTY";
         }
     };
