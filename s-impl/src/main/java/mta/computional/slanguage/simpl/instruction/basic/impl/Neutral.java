@@ -1,5 +1,6 @@
 package mta.computional.slanguage.simpl.instruction.basic.impl;
 
+import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.simpl.instruction.basic.AbstractBasicInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
@@ -17,12 +18,17 @@ public class Neutral extends AbstractBasicInstruction {
 
     @Override
     public String getName() {
-        return "Neutral";
+        return SInstructionRegistry.INCREASE.getName();
     }
 
     @Override
     public long decode() {
         return 0;
+    }
+
+    @Override
+    public String toVerboseString() {
+        return super.toVerboseString() + variableName + " <- " + variableName;
     }
 
     @Override

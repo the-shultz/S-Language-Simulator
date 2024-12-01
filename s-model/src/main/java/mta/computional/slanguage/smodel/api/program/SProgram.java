@@ -7,8 +7,10 @@ import java.util.List;
 
 public interface SProgram {
 
+    void addInstruction(SInstruction instruction);
+
     long decode();
-    String toString();
+    String toVerboseString();
     int length();
     List<SInstruction> expand();
     SInstruction getInstructionAt(int index);

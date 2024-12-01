@@ -27,5 +27,8 @@ public abstract class AbstractInstruction implements SInstruction {
         return label;
     }
 
-
+    @Override
+    public String toVerboseString() {
+        return String.format("[ %2s ] ", getLabel().toVerboseString());
+    }
 }

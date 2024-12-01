@@ -1,5 +1,6 @@
 package mta.computional.slanguage.simpl.instruction.basic.impl;
 
+import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.simpl.instruction.basic.AbstractBasicInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
@@ -19,7 +20,7 @@ public class JumpNoZero extends AbstractBasicInstruction {
 
     @Override
     public String getName() {
-        return "Jump No Zero";
+        return SInstructionRegistry.INCREASE.getName();
     }
 
     @Override
@@ -28,8 +29,13 @@ public class JumpNoZero extends AbstractBasicInstruction {
     }
 
     @Override
+    public String toVerboseString() {
+        return super.toVerboseString() + "IF " + variableName + " != 0 GOTO " + jumpLabel;
+    }
+
+    @Override
     public Label execute(SProgramRunner programRunner) {
-        int variable = programRunner.getVariable(variableName);
+        long variable = programRunner.getVariable(variableName);
 
         if (variable != 0) {
             return jumpLabel;

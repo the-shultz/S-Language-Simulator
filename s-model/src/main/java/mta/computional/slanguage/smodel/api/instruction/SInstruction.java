@@ -16,7 +16,7 @@ public interface SInstruction {
     boolean isSynthetic();
 
     List<SInstruction> expand();
-    String toString();
+    String toVerboseString();
 
     Label execute(SProgramRunner programRunner);
 
@@ -49,6 +49,11 @@ public interface SInstruction {
         @Override
         public List<SInstruction> expand() {
             return List.of(this);
+        }
+
+        @Override
+        public String toVerboseString() {
+            return "Program Stopped";
         }
 
         @Override

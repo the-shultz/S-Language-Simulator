@@ -5,4 +5,8 @@ import mta.computional.slanguage.smodel.api.label.Label;
 
 public record LabelImpl(String label) implements Label {
 
+    @Override
+    public String toVerboseString() {
+        return label;
+    }
 }
