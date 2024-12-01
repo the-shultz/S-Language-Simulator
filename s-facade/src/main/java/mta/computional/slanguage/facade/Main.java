@@ -4,6 +4,7 @@ import mta.computional.slanguage.facade.factory.InstructionsFactory;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.program.SProgram;
+import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
 public class Main {
 
@@ -20,5 +21,10 @@ public class Main {
         program.addInstruction(i4);
 
         System.out.println(program.toVerboseString());
+
+        SProgramRunner programRunner = InstructionsFactory.createProgramRunner(program);
+        long result = programRunner.run(2);
+        System.out.printf("Result (Y): %d\n", result);
+
     }
 }

@@ -8,9 +8,11 @@ import mta.computional.slanguage.simpl.instruction.basic.impl.JumpNoZero;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Neutral;
 import mta.computional.slanguage.simpl.label.LabelImpl;
 import mta.computional.slanguage.simpl.program.SProgramImpl;
+import mta.computional.slanguage.simpl.program.SProgramRunnerImpl;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
+import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
 public class InstructionsFactory {
 
@@ -46,5 +48,9 @@ public class InstructionsFactory {
 
     public static SProgram createEmptyProgram() {
         return new SProgramImpl();
+    }
+
+    public static SProgramRunner createProgramRunner(SProgram program) {
+        return new SProgramRunnerImpl(program);
     }
 }
