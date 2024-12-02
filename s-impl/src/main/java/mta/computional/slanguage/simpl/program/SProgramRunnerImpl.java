@@ -66,6 +66,6 @@ public class SProgramRunnerImpl implements SProgramRunner {
         }
 
         // y is the output variable
-        return variables.get("y");
+        return Optional.ofNullable(variables.get("y")).orElse(0L);
     }
 }
