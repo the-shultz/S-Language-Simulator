@@ -1,11 +1,16 @@
 package mta.computional.slanguage.simpl.program;
 
+import mta.computional.slanguage.smodel.api.instruction.SInstruction;
+import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
 public class SProgramRunnerImpl implements SProgramRunner {
 
@@ -31,15 +36,36 @@ public class SProgramRunnerImpl implements SProgramRunner {
 
     @Override
     public long run(Integer... input) {
+
+        // empty program edge case
+        if (program.length() == 0) {
+            return 0;
+        }
+
+        // initialize input variables
         for (int i = 0; i < input.length; i++) {
-            variables.put("X" + (i+1), (long)input[i]);
+            variables.put("x" + (i+1), (long)input[i]);
         }
 
-        for (int i = 0; i < program.length(); i++) {
-            program.getInstructionAt(i).execute(this);
+        // fetch first instruction
+        SInstruction nextInstruction = program.getInstructionAt(1);
+
+        // work the program until reaching STOP command
+        while (nextInstruction != SInstruction.STOP) {
+
+            Label nextInstructionLabel = nextInstruction.execute(this);
+            switch (nextInstructionLabel) {
+                case EXIT:
+                    nextInstruction = SInstruction.STOP;
+                case EMPTY:
+                    nextInstruction = nextInstruction.next();
+                    break;
+                default:
+                    nextInstruction = program.getFirstInstructionByLabel(nextInstructionLabel);
+            }
         }
 
-        // Y is the output variable
-        return variables.get("Y");
+        // y is the output variable
+        return variables.get("y");
     }
 }

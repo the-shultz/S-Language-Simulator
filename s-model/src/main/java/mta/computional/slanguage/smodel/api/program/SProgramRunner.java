@@ -1,10 +1,6 @@
 package mta.computional.slanguage.smodel.api.program;
 
-public interface SProgramRunner {
-
-    void updateVariable(String name, long value);
-
-    long getVariable(String variableName);
+public interface SProgramRunner extends ExecutionContext {
 
     long run(Integer... input);
 }

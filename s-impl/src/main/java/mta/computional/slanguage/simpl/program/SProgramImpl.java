@@ -1,5 +1,6 @@
 package mta.computional.slanguage.simpl.program;
 
+import mta.computional.slanguage.simpl.instruction.AbstractInstruction;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static mta.computional.slanguage.smodel.api.instruction.SInstruction.STOP;
 
 public class SProgramImpl implements SProgram {
 
@@ -19,11 +22,27 @@ public class SProgramImpl implements SProgram {
 
     public SProgramImpl(List<SInstruction> instructions) {
         this.instructions = instructions;
+
+        if (!instructions.isEmpty()) {
+
+            for (int i = 1; i < instructions.size(); i++) {
+                instructions.get(i - 1).setNextInstructionInOrder(instructions.get(i));
+            }
+
+            instructions.getLast().setNextInstructionInOrder(STOP);
+        }
     }
 
     @Override
     public void addInstruction(SInstruction instruction) {
+        SInstruction wasLastInstruction = instructions.isEmpty() ? null : instructions.getLast();
+
+        if (wasLastInstruction != null) {
+            wasLastInstruction.setNextInstructionInOrder(instruction);
+        }
+
         instructions.add(instruction);
+        instruction.setNextInstructionInOrder(STOP);
     }
 
     @Override
@@ -62,16 +81,16 @@ public class SProgramImpl implements SProgram {
         if (index <= instructions.size()) {
             return instructions.get(index - 1);
         }
-        return SInstruction.STOP;
+        return STOP;
     }
 
     @Override
-    public SInstruction getInstructionByLabel(Label label) {
+    public SInstruction getFirstInstructionByLabel(Label label) {
         for (SInstruction instruction : instructions) {
             if (instruction.hasLabel() && instruction.getLabel().equals(label)) {
                 return instruction;
             }
         }
-        return SInstruction.STOP;
+        return STOP;
     }
 }

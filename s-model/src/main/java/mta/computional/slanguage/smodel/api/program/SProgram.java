@@ -14,5 +14,5 @@ public interface SProgram {
     int length();
     List<SInstruction> expand();
     SInstruction getInstructionAt(int index);
-    SInstruction getInstructionByLabel(Label label);
+    SInstruction getFirstInstructionByLabel(Label label);
 }

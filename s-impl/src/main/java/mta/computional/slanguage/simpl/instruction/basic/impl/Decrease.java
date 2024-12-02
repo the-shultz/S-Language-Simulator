@@ -3,7 +3,9 @@ package mta.computional.slanguage.simpl.instruction.basic.impl;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.simpl.instruction.basic.AbstractBasicInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
-import mta.computional.slanguage.smodel.api.program.SProgramRunner;
+import mta.computional.slanguage.smodel.api.program.ExecutionContext;
+
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class Decrease extends AbstractBasicInstruction {
 
@@ -31,16 +33,16 @@ public class Decrease extends AbstractBasicInstruction {
     }
 
     @Override
-    public Label execute(SProgramRunner programRunner) {
-        long variable = programRunner.getVariable(variableName);
+    public Label execute(ExecutionContext context) {
+        long variable = context.getVariable(variableName);
 
         variable--;
         if (variable < 0) {
             variable = 0;
         }
 
-        programRunner.updateVariable(this.variableName, variable);
+        context.updateVariable(this.variableName, variable);
 
-        return getLabel();
+        return EMPTY;
     }
 }

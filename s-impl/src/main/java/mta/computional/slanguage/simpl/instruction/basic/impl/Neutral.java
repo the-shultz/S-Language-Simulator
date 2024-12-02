@@ -3,7 +3,9 @@ package mta.computional.slanguage.simpl.instruction.basic.impl;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.simpl.instruction.basic.AbstractBasicInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
-import mta.computional.slanguage.smodel.api.program.SProgramRunner;
+import mta.computional.slanguage.smodel.api.program.ExecutionContext;
+
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class Neutral extends AbstractBasicInstruction {
 
@@ -32,8 +34,8 @@ public class Neutral extends AbstractBasicInstruction {
     }
 
     @Override
-    public Label execute(SProgramRunner programRunner) {
+    public Label execute(ExecutionContext context) {
         // V <- V does nothing
-        return getLabel();
+        return EMPTY;
     }
 }

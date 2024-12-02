@@ -14,6 +14,8 @@ import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
+
 public class InstructionsFactory {
 
     public static Label createLabel(String labelName) {
@@ -21,7 +23,7 @@ public class InstructionsFactory {
     }
 
     public static SInstruction createInstruction(SInstructionRegistry instructionCode, String variableName) {
-        return createInstruction(instructionCode, variableName, Label.EMPTY);
+        return createInstruction(instructionCode, variableName, EMPTY);
     }
 
     public static SInstruction createInstruction(SInstructionRegistry instructionCode, String variableName, Label jumpLabel) {
@@ -34,7 +36,7 @@ public class InstructionsFactory {
     }
 
     public static SInstruction createInstructionWithLabel(Label instructionLabel, SInstructionRegistry instructionCode, String variableName) {
-        return createInstructionWithLabel(instructionLabel, instructionCode, variableName, Label.EMPTY);
+        return createInstructionWithLabel(instructionLabel, instructionCode, variableName, EMPTY);
     }
 
     public static SInstruction createInstructionWithLabel(Label instructionLabel, SInstructionRegistry instructionCode, String variableName, Label jumpLabel) {

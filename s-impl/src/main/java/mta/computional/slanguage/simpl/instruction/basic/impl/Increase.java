@@ -3,7 +3,9 @@ package mta.computional.slanguage.simpl.instruction.basic.impl;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.simpl.instruction.basic.AbstractBasicInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
-import mta.computional.slanguage.smodel.api.program.SProgramRunner;
+import mta.computional.slanguage.smodel.api.program.ExecutionContext;
+
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class Increase extends AbstractBasicInstruction {
 
@@ -31,11 +33,11 @@ public class Increase extends AbstractBasicInstruction {
     }
 
     @Override
-    public Label execute(SProgramRunner programRunner) {
+    public Label execute(ExecutionContext context) {
 
-        long variable = programRunner.getVariable(variableName);
+        long variable = context.getVariable(variableName);
         variable++;
-        programRunner.updateVariable(this.variableName, variable);
-        return getLabel();
+        context.updateVariable(this.variableName, variable);
+        return EMPTY;
     }
 }

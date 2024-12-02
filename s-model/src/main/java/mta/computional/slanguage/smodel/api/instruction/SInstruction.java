@@ -1,9 +1,11 @@
 package mta.computional.slanguage.smodel.api.instruction;
 
-import mta.computional.slanguage.smodel.api.program.SProgramRunner;
+import mta.computional.slanguage.smodel.api.program.ExecutionContext;
 import mta.computional.slanguage.smodel.api.label.Label;
 
 import java.util.List;
+
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
 public interface SInstruction {
 
@@ -18,7 +20,10 @@ public interface SInstruction {
     List<SInstruction> expand();
     String toVerboseString();
 
-    Label execute(SProgramRunner programRunner);
+    Label execute(ExecutionContext context);
+
+    SInstruction next();
+    void setNextInstructionInOrder(SInstruction nextInstructionInOrder);
 
     SInstruction STOP = new SInstruction() {
         @Override
@@ -38,7 +43,7 @@ public interface SInstruction {
 
         @Override
         public Label getLabel() {
-            return Label.EXIT;
+            return EXIT;
         }
 
         @Override
@@ -62,8 +67,18 @@ public interface SInstruction {
         }
 
         @Override
-        public Label execute(SProgramRunner programRunner) {
-            return Label.EXIT;
+        public Label execute(ExecutionContext context) {
+            return EXIT;
+        }
+
+        @Override
+        public SInstruction next() {
+            return this;
+        }
+
+        @Override
+        public void setNextInstructionInOrder(SInstruction nextInstructionInOrder) {
+
         }
     };
 }
