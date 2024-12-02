@@ -15,12 +15,14 @@ import static mta.computional.slanguage.smodel.api.instruction.SInstruction.STOP
 public class SProgramImpl implements SProgram {
 
     private final List<SInstruction> instructions;
+    private final String name;
 
-    public SProgramImpl() {
-        this.instructions = new ArrayList<>();
+    public SProgramImpl(String name) {
+        this(name, new ArrayList<>());
     }
 
-    public SProgramImpl(List<SInstruction> instructions) {
+    public SProgramImpl(String name, List<SInstruction> instructions) {
+        this.name = name;
         this.instructions = instructions;
 
         if (!instructions.isEmpty()) {
@@ -31,6 +33,11 @@ public class SProgramImpl implements SProgram {
 
             instructions.getLast().setNextInstructionInOrder(STOP);
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -55,11 +62,12 @@ public class SProgramImpl implements SProgram {
 
         // add [line number] before each instruction
         AtomicInteger lineNumber = new AtomicInteger(1);
-        return instructions
+        String programInstructions = instructions
                 .stream()
                 .map(SInstruction::toVerboseString)
                 .map(instruction -> String.format("%02d %s", lineNumber.getAndIncrement(), instruction))
                 .collect(Collectors.joining("\n"));
+        return String.format("Program: %s\n%s", name, programInstructions);
     }
 
     @Override

@@ -48,8 +48,8 @@ public class InstructionsFactory {
         };
     }
 
-    public static SProgram createEmptyProgram() {
-        return new SProgramImpl();
+    public static SProgram createEmptyProgram(String name) {
+        return new SProgramImpl(name);
     }
 
     public static SProgramRunner createProgramRunner(SProgram program) {

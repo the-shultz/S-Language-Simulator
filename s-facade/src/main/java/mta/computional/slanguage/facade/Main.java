@@ -15,12 +15,11 @@ public class Main {
         SInstruction i2 = InstructionsFactory.createInstruction(SInstructionRegistry.INCREASE, "y");
         SInstruction i3 = InstructionsFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", a1);
 
-        SProgram program = InstructionsFactory.createEmptyProgram();
+        SProgram program = InstructionsFactory.createEmptyProgram("P");
         program.addInstruction(i1);
         program.addInstruction(i2);
         program.addInstruction(i3);
 
-        System.out.println("Program P:");
         System.out.println(program.toVerboseString());
 
         SProgramRunner programRunner = InstructionsFactory.createProgramRunner(program);
