@@ -2,6 +2,7 @@ package mta.computional.slanguage.smodel.api.instruction;
 
 import mta.computional.slanguage.smodel.api.program.ExecutionContext;
 import mta.computional.slanguage.smodel.api.label.Label;
+import mta.computional.slanguage.smodel.api.program.ProgramActions;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface SInstruction {
 
     boolean isSynthetic();
 
-    List<SInstruction> expand();
+    List<SInstruction> expand(ProgramActions context);
     String toVerboseString();
 
     Label execute(ExecutionContext context);
@@ -52,8 +53,8 @@ public interface SInstruction {
         }
 
         @Override
-        public List<SInstruction> expand() {
-            return List.of(this);
+        public List<SInstruction> expand(ProgramActions context) {
+            return List.of();
         }
 
         @Override

@@ -5,7 +5,7 @@ import mta.computional.slanguage.smodel.api.label.Label;
 
 import java.util.List;
 
-public interface SProgram {
+public interface SProgram extends ProgramActions {
 
     String getName();
     void addInstruction(SInstruction instruction);
@@ -13,7 +13,7 @@ public interface SProgram {
     long decode();
     String toVerboseString();
     int length();
-    List<SInstruction> expand();
+    SProgram expand();
     SInstruction getInstructionAt(int index);
     SInstruction getFirstInstructionByLabel(Label label);
 }

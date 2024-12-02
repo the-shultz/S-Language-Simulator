@@ -1,12 +1,15 @@
 package mta.computional.slanguage.simpl.program;
 
-import mta.computional.slanguage.simpl.instruction.AbstractInstruction;
+import mta.computional.slanguage.simpl.factory.SComponentFactory;
+import mta.computional.slanguage.simpl.label.LabelImpl;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -14,8 +17,11 @@ import static mta.computional.slanguage.smodel.api.instruction.SInstruction.STOP
 
 public class SProgramImpl implements SProgram {
 
+    public static final String LABEL_NAMING_FORMAT = "L%d";
     private final List<SInstruction> instructions;
     private final String name;
+    private final Set<Label> labels;
+    private int nextLabelId;
 
     public SProgramImpl(String name) {
         this(name, new ArrayList<>());
@@ -24,6 +30,8 @@ public class SProgramImpl implements SProgram {
     public SProgramImpl(String name, List<SInstruction> instructions) {
         this.name = name;
         this.instructions = instructions;
+        labels = new HashSet<>();
+        nextLabelId = 0;
 
         if (!instructions.isEmpty()) {
 
@@ -71,16 +79,38 @@ public class SProgramImpl implements SProgram {
     }
 
     @Override
+    public Label createAvailableLabel() {
+        Label label;
+        do {
+            nextLabelId++;
+             label = new LabelImpl(String.format(LABEL_NAMING_FORMAT, nextLabelId));
+        } while (labels.contains(label));
+        labels.add(label);
+        return label;
+    }
+
+    @Override
     public int length() {
         return instructions.size();
     }
 
     @Override
-    public List<SInstruction> expand() {
-        return instructions
-                .stream()
-                .flatMap(instruction -> instruction.expand().stream())
-                .collect(Collectors.toList());
+    public SProgram expand() {
+        List<SInstruction> expandInstructions = instructions;
+        boolean hasSynthetic;
+        do {
+            expandInstructions = expandInstructions
+                    .stream()
+                    .flatMap(instruction -> instruction.expand(this).stream())
+                    .collect(Collectors.toList());
+
+            hasSynthetic = expandInstructions
+                    .stream()
+                    .anyMatch(SInstruction::isSynthetic);
+
+        } while (hasSynthetic);
+
+        return SComponentFactory.createProgramWithInstructions("! EXPANDED ! " + name, expandInstructions);
     }
 
     @Override
