@@ -22,7 +22,9 @@ public class SProgramImpl implements SProgram {
     private final List<SInstruction> instructions;
     private final String name;
     private final Set<Label> labels;
+    private final Set<String> workingVariables;
     private int nextLabelId;
+    private int nextWorkingVariableId;
 
     public SProgramImpl(String name) {
         this(name, new ArrayList<>());
@@ -31,8 +33,6 @@ public class SProgramImpl implements SProgram {
     public SProgramImpl(String name, List<SInstruction> instructions) {
         this.name = name;
         this.instructions = instructions;
-        labels = new HashSet<>();
-        nextLabelId = 0;
 
         if (!instructions.isEmpty()) {
 
@@ -42,6 +42,20 @@ public class SProgramImpl implements SProgram {
 
             instructions.getLast().setNextInstructionInOrder(STOP);
         }
+
+        nextLabelId = 0;
+        labels = instructions
+            .stream()
+            .filter(SInstruction::hasLabel)
+            .map(SInstruction::getLabel)
+            .collect(Collectors.toSet());
+
+        nextWorkingVariableId = 0;
+        workingVariables = instructions
+                .stream()
+                .map(SInstruction::getVariable)
+                .filter(variable -> variable.startsWith("z"))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -59,6 +73,11 @@ public class SProgramImpl implements SProgram {
 
         instructions.add(instruction);
         instruction.setNextInstructionInOrder(STOP);
+
+        labels.add(instruction.getLabel());
+        if (instruction.getVariable().startsWith("z")) {
+            workingVariables.add(instruction.getVariable());
+        }
     }
 
     @Override
@@ -88,6 +107,17 @@ public class SProgramImpl implements SProgram {
         } while (labels.contains(label));
         labels.add(label);
         return label;
+    }
+
+    @Override
+    public String createFreeWorkingVariable() {
+        String freeWorkingVariable;
+        do {
+            nextWorkingVariableId++;
+            freeWorkingVariable = "z" + nextWorkingVariableId;
+        } while (workingVariables.contains(freeWorkingVariable));
+        workingVariables.add(freeWorkingVariable);
+        return freeWorkingVariable;
     }
 
     @Override

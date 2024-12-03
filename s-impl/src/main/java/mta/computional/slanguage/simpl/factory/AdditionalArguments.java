@@ -8,7 +8,8 @@ import mta.computional.slanguage.smodel.api.label.Label;
 @Getter
 public class AdditionalArguments {
 
-    private Label jumpLabel;
+    private Label jumpNotZeroLabel;
+    private Label gotoLabel;
     private String assignedVariableName;
 
     static AdditionalArguments EMPTY = AdditionalArguments.builder().build();

@@ -13,6 +13,7 @@ public interface SInstruction extends Serializable {
 
     String getName();
     long decode();
+    String getVariable();
 
     boolean hasLabel();
     Label getLabel();
@@ -36,6 +37,11 @@ public interface SInstruction extends Serializable {
         @Override
         public long decode() {
             return 0;
+        }
+
+        @Override
+        public String getVariable() {
+            return "";
         }
 
         @Override

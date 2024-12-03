@@ -8,6 +8,7 @@ import mta.computional.slanguage.simpl.instruction.basic.impl.JumpNoZero;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Neutral;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.AssignZero;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.Assignment;
+import mta.computional.slanguage.simpl.instruction.synthetic.impl.GotoLabel;
 import mta.computional.slanguage.simpl.label.LabelImpl;
 import mta.computional.slanguage.simpl.program.SProgramImpl;
 import mta.computional.slanguage.simpl.program.SProgramRunnerImpl;
@@ -17,8 +18,6 @@ import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
 import java.util.List;
-
-import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public interface SComponentFactory {
 
@@ -35,9 +34,10 @@ public interface SComponentFactory {
             case NEUTRAL -> new Neutral(variableName);
             case INCREASE -> new Increase(variableName);
             case DECREASE -> new Decrease(variableName);
-            case JUMP_NOT_ZERO -> new JumpNoZero(variableName, additionalArguments.getJumpLabel());
+            case JUMP_NOT_ZERO -> new JumpNoZero(variableName, additionalArguments.getJumpNotZeroLabel());
             case ZERO_VARIABLE -> new AssignZero(variableName);
             case ASSIGNMENT -> new Assignment(variableName, additionalArguments.getAssignedVariableName());
+            case GOTO_LABEL -> new GotoLabel(variableName, additionalArguments.getGotoLabel());
         };
     }
 
@@ -50,9 +50,10 @@ public interface SComponentFactory {
             case NEUTRAL -> new Neutral(instructionLabel, variableName);
             case INCREASE -> new Increase(instructionLabel, variableName);
             case DECREASE -> new Decrease(instructionLabel, variableName);
-            case JUMP_NOT_ZERO -> new JumpNoZero(instructionLabel, variableName, additionalArguments.getJumpLabel());
+            case JUMP_NOT_ZERO -> new JumpNoZero(instructionLabel, variableName, additionalArguments.getJumpNotZeroLabel());
             case ZERO_VARIABLE -> new AssignZero(instructionLabel, variableName);
             case ASSIGNMENT -> new Assignment(instructionLabel, variableName, additionalArguments.getAssignedVariableName());
+            case GOTO_LABEL -> new GotoLabel(instructionLabel, variableName, additionalArguments.getGotoLabel());
         };
     }
 

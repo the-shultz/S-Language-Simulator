@@ -45,11 +45,11 @@ public class Assignment extends AbstractSyntheticInstruction {
     @Override
     public List<SInstruction> expand(ProgramActions context) {
         Label L1 = context.createAvailableLabel();
-        AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpLabel(L1).build();
+        AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpNotZeroLabel(L1).build();
 
         return List.of(
-                SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, variableName),
-                SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, variableName, additionalArguments)
+//                SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, variableName),
+//                SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, variableName, additionalArguments)
         );
     }
 

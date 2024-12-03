@@ -11,22 +11,24 @@ import mta.computional.slanguage.smodel.api.program.ProgramActions;
 
 import java.util.List;
 
-import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.ZERO_VARIABLE;
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
-public class AssignZero extends AbstractSyntheticInstruction {
+public class GotoLabel extends AbstractSyntheticInstruction {
 
-    public AssignZero(String variableName) {
-        super(variableName);
+    private final Label jumpLabel;
+
+    public GotoLabel(String variableName, Label jumpLabel) {
+        this(EMPTY, variableName, jumpLabel);
     }
 
-    public AssignZero(Label label, String variableName) {
+    public GotoLabel(Label label, String variableName, Label jumpLabel) {
         super(label, variableName);
+        this.jumpLabel = jumpLabel;
     }
 
     @Override
     public String getName() {
-        return ZERO_VARIABLE.getName();
+        return SInstructionRegistry.GOTO_LABEL.getName();
     }
 
     @Override
@@ -36,23 +38,21 @@ public class AssignZero extends AbstractSyntheticInstruction {
 
     @Override
     public String toVerboseString() {
-        return super.toVerboseString() + variableName + " <- 0";
+        return super.toVerboseString() + "GOTO " + jumpLabel.toVerboseString();
     }
 
     @Override
     public List<SInstruction> expand(ProgramActions context) {
-        Label L = context.createAvailableLabel();
-        AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpNotZeroLabel(L).build();
-
+        String freeWorkingVariable = context.createFreeWorkingVariable();
+        AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpNotZeroLabel(jumpLabel).build();
         return List.of(
-                SComponentFactory.createInstructionWithLabel(L, SInstructionRegistry.DECREASE, variableName),
-                SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, variableName, additionalArguments)
+                SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, freeWorkingVariable),
+                SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, freeWorkingVariable, additionalArguments)
         );
     }
 
     @Override
     public Label execute(ExecutionContext context) {
-        context.updateVariable(variableName, 0);
-        return EMPTY;
+        return jumpLabel;
     }
 }

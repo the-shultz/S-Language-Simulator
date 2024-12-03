@@ -31,6 +31,11 @@ public abstract class AbstractInstruction implements SInstruction {
     }
 
     @Override
+    public String getVariable() {
+        return variableName;
+    }
+
+    @Override
     public String toVerboseString() {
         return String.format("[ %2s ] ", getLabel().toVerboseString());
     }
