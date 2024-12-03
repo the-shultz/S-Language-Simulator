@@ -1,5 +1,6 @@
 package mta.computional.slanguage.facade;
 
+import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
@@ -21,7 +22,7 @@ public class Main {
         Label a1 = SComponentFactory.createLabel("A1");
         SInstruction i1 = SComponentFactory.createInstructionWithLabel(a1, SInstructionRegistry.DECREASE, "x1");
         SInstruction i2 = SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y");
-        SInstruction i3 = SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", a1);
+        SInstruction i3 = SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", AdditionalArguments.builder().jumpLabel(a1).build());
 
         SProgram program = SComponentFactory.createEmptyProgram("P");
         program.addInstruction(i1);
@@ -43,12 +44,13 @@ public class Main {
         SProgram program = SComponentFactory.createEmptyProgram("ID");
 
         Label A1 = SComponentFactory.createLabel("A1");
-        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", A1));
+        AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpLabel(A1).build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", additionalArguments));
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "z1"));
-        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "z1", EXIT));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "z1", AdditionalArguments.builder().jumpLabel(EXIT).build()));
         program.addInstruction(SComponentFactory.createInstructionWithLabel(A1, SInstructionRegistry.DECREASE, "x1"));
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y"));
-        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", A1));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", additionalArguments));
 
         System.out.println(program.toVerboseString());
 
@@ -66,22 +68,32 @@ public class Main {
     private static SProgram syntheticSugars() {
         SProgram program = SComponentFactory.createEmptyProgram("Synthetic Sugars");
         Label A1 = SComponentFactory.createLabel("A1");
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .jumpLabel(A1)
+                .assignedVariableName("x1")
+                .build();
         program.addInstruction(SComponentFactory.createInstructionWithLabel(A1, SInstructionRegistry.INCREASE, "z2"));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, "y", additionalArguments));
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, "x1"));
-        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "z3", A1));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "z3", additionalArguments));
 
         System.out.println(program.toVerboseString());
-        System.out.println();
-        System.out.println(program.expand().toVerboseString());
+        executeProgram(program, 7);
 
-        SProgramRunner programRunner = SComponentFactory.createProgramRunner(program);
         System.out.println();
-        int input = 7;
-        System.out.println("Executing Synthetic Sugars on input: " + input);
-        long result = programRunner.run(input);
-        System.out.printf("Result (y): %d\n", result);
+        SProgram expandedProgram = program.expand();
+        System.out.println(expandedProgram.toVerboseString());
+        executeProgram(expandedProgram, 7);
 
         return program;
+    }
 
+    private static void executeProgram(SProgram program, int input) {
+        SProgramRunner programRunner = SComponentFactory.createProgramRunner(program);
+        System.out.println();
+        System.out.println("Executing program [" + program.getName() + "] on input: " + input);
+        long result = programRunner.run(input);
+        System.out.printf("Result (y): %d\n", result);
     }
 }

@@ -6,7 +6,8 @@ public enum SInstructionRegistry {
     DECREASE("Decrease"),
     NEUTRAL("Neutral"),
     JUMP_NOT_ZERO("Jump Not Zero"),
-    ZERO_VARIABLE("Assign Zero");
+    ZERO_VARIABLE("Assign Zero"),
+    ASSIGNMENT("Assignment");
 
     private final String name;
 

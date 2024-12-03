@@ -1,6 +1,8 @@
 package mta.computional.slanguage.smodel.api.label;
 
-public interface Label {
+import java.io.Serializable;
+
+public interface Label extends Serializable {
     String label();
     String toVerboseString();
 }

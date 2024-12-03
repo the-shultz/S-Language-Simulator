@@ -7,6 +7,7 @@ import mta.computional.slanguage.simpl.instruction.basic.impl.Increase;
 import mta.computional.slanguage.simpl.instruction.basic.impl.JumpNoZero;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Neutral;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.AssignZero;
+import mta.computional.slanguage.simpl.instruction.synthetic.impl.Assignment;
 import mta.computional.slanguage.simpl.label.LabelImpl;
 import mta.computional.slanguage.simpl.program.SProgramImpl;
 import mta.computional.slanguage.simpl.program.SProgramRunnerImpl;
@@ -26,30 +27,32 @@ public interface SComponentFactory {
     }
 
     static SInstruction createInstruction(SInstructionRegistry instructionCode, String variableName) {
-        return createInstruction(instructionCode, variableName, EMPTY);
+        return createInstruction(instructionCode, variableName, AdditionalArguments.EMPTY);
     }
 
-    static SInstruction createInstruction(SInstructionRegistry instructionCode, String variableName, Label jumpLabel) {
+    static SInstruction createInstruction(SInstructionRegistry instructionCode, String variableName, AdditionalArguments additionalArguments) {
         return switch (instructionCode) {
             case NEUTRAL -> new Neutral(variableName);
             case INCREASE -> new Increase(variableName);
             case DECREASE -> new Decrease(variableName);
-            case JUMP_NOT_ZERO -> new JumpNoZero(variableName, jumpLabel);
+            case JUMP_NOT_ZERO -> new JumpNoZero(variableName, additionalArguments.getJumpLabel());
             case ZERO_VARIABLE -> new AssignZero(variableName);
+            case ASSIGNMENT -> new Assignment(variableName, additionalArguments.getAssignedVariableName());
         };
     }
 
     static SInstruction createInstructionWithLabel(Label instructionLabel, SInstructionRegistry instructionCode, String variableName) {
-        return createInstructionWithLabel(instructionLabel, instructionCode, variableName, EMPTY);
+        return createInstructionWithLabel(instructionLabel, instructionCode, variableName, AdditionalArguments.EMPTY);
     }
 
-    static SInstruction createInstructionWithLabel(Label instructionLabel, SInstructionRegistry instructionCode, String variableName, Label jumpLabel) {
+    static SInstruction createInstructionWithLabel(Label instructionLabel, SInstructionRegistry instructionCode, String variableName, AdditionalArguments additionalArguments) {
         return switch (instructionCode) {
             case NEUTRAL -> new Neutral(instructionLabel, variableName);
             case INCREASE -> new Increase(instructionLabel, variableName);
             case DECREASE -> new Decrease(instructionLabel, variableName);
-            case JUMP_NOT_ZERO -> new JumpNoZero(instructionLabel, variableName, jumpLabel);
+            case JUMP_NOT_ZERO -> new JumpNoZero(instructionLabel, variableName, additionalArguments.getJumpLabel());
             case ZERO_VARIABLE -> new AssignZero(instructionLabel, variableName);
+            case ASSIGNMENT -> new Assignment(instructionLabel, variableName, additionalArguments.getAssignedVariableName());
         };
     }
 

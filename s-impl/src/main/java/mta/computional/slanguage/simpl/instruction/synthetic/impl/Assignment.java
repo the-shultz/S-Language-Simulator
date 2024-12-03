@@ -11,22 +11,25 @@ import mta.computional.slanguage.smodel.api.program.ProgramActions;
 
 import java.util.List;
 
-import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.ZERO_VARIABLE;
+import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.ASSIGNMENT;
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
-public class AssignZero extends AbstractSyntheticInstruction {
+public class Assignment extends AbstractSyntheticInstruction {
 
-    public AssignZero(String variableName) {
-        super(variableName);
+    private final String assignedVariableName;
+
+    public Assignment(String variableName, String assignedVariableName) {
+        this(EMPTY, variableName, assignedVariableName);
     }
 
-    public AssignZero(Label label, String variableName) {
+    public Assignment(Label label, String variableName, String assignedVariableName) {
         super(label, variableName);
+        this.assignedVariableName = assignedVariableName;
     }
 
     @Override
     public String getName() {
-        return ZERO_VARIABLE.getName();
+        return ASSIGNMENT.getName();
     }
 
     @Override
@@ -36,23 +39,23 @@ public class AssignZero extends AbstractSyntheticInstruction {
 
     @Override
     public String toVerboseString() {
-        return super.toVerboseString() + variableName + " <- 0";
+        return super.toVerboseString() + variableName + " <- " + assignedVariableName;
     }
 
     @Override
     public List<SInstruction> expand(ProgramActions context) {
-        Label L = context.createAvailableLabel();
-        AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpLabel(L).build();
+        Label L1 = context.createAvailableLabel();
+        AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpLabel(L1).build();
 
         return List.of(
-                SComponentFactory.createInstructionWithLabel(L, SInstructionRegistry.DECREASE, variableName),
+                SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, variableName),
                 SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, variableName, additionalArguments)
         );
     }
 
     @Override
     public Label execute(ExecutionContext context) {
-        context.updateVariable(variableName, 0);
+        context.updateVariable(variableName, context.getVariable(assignedVariableName));
         return EMPTY;
     }
 }

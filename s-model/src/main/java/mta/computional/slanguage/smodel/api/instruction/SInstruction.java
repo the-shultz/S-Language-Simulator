@@ -4,11 +4,12 @@ import mta.computional.slanguage.smodel.api.program.ExecutionContext;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.ProgramActions;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
-public interface SInstruction {
+public interface SInstruction extends Serializable {
 
     String getName();
     long decode();

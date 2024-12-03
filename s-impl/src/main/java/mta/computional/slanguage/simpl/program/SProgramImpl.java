@@ -6,6 +6,7 @@ import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -96,7 +97,7 @@ public class SProgramImpl implements SProgram {
 
     @Override
     public SProgram expand() {
-        List<SInstruction> expandInstructions = instructions;
+        List<SInstruction> expandInstructions = deepCopyInstructions();
         boolean hasSynthetic;
         do {
             expandInstructions = expandInstructions
@@ -130,5 +131,24 @@ public class SProgramImpl implements SProgram {
             }
         }
         return STOP;
+    }
+
+    private List<SInstruction> deepCopyInstructions() {
+        // create a duplicate of instructions using serialization
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream out = new ObjectOutputStream(bos)) {
+            out.writeObject(instructions);
+            out.flush();
+            bos.flush();
+            byte[] data = bos.toByteArray();
+
+            try (ByteArrayInputStream bis = new ByteArrayInputStream(data);
+                 ObjectInputStream in = new ObjectInputStream(bis)) {
+                return (List<SInstruction>) in.readObject();
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Failed to deep copy instructions", e);
+        }
+
     }
 }
