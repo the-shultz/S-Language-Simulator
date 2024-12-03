@@ -44,13 +44,30 @@ public class Assignment extends AbstractSyntheticInstruction {
 
     @Override
     public List<SInstruction> expand(ProgramActions context) {
-        Label L1 = context.createAvailableLabel();
-        AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpNotZeroLabel(L1).build();
+        Label A = context.createAvailableLabel();
+        Label B = context.createAvailableLabel();
+        Label L = context.createAvailableLabel();
+        String Z = context.createFreeWorkingVariable();
+        AdditionalArguments additionalArguments =
+                AdditionalArguments
+                        .builder()
+                        .jumpNotZeroLabel(A)
+                        .gotoLabel(L)
+                        .build();
 
         return List.of(
-//                SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, variableName),
-//                SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, variableName, additionalArguments)
-        );
+                SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, variableName),
+                SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, assignedVariableName, additionalArguments),
+                SComponentFactory.createInstruction(SInstructionRegistry.GOTO_LABEL, variableName, additionalArguments),
+                SComponentFactory.createInstructionWithLabel(A, SInstructionRegistry.DECREASE, assignedVariableName),
+                SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, Z),
+                SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, assignedVariableName, additionalArguments),
+                SComponentFactory.createInstructionWithLabel(B, SInstructionRegistry.DECREASE, Z),
+                SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, variableName),
+                SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, assignedVariableName),
+                SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, Z, AdditionalArguments.builder().jumpNotZeroLabel(B).build()),
+                SComponentFactory.createInstructionWithLabel(L, SInstructionRegistry.NEUTRAL, variableName)
+                );
     }
 
     @Override
