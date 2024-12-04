@@ -37,7 +37,7 @@ public class Main {
         SProgramRunner programRunner = SComponentFactory.createProgramRunner(program);
         System.out.println();
         System.out.println("Executing on input: 0");
-        long result = programRunner.run(0);
+        long result = programRunner.run(0L);
         System.out.printf("Result (y): %d\n", result);
 
         return program;
@@ -59,7 +59,7 @@ public class Main {
 
         SProgramRunner programRunner = SComponentFactory.createProgramRunner(program);
         System.out.println();
-        int input = 0;
+        long input = 0L;
         System.out.println("Executing ID on input: " + input);
         long result = programRunner.run(input);
         System.out.printf("Result (y): %d\n", result);
@@ -93,7 +93,7 @@ public class Main {
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
                         .sourceFunctionName(idProgram.getName())
                         .functionsImplementations(Map.of(idProgram.getName(), idProgram))
-                        .sourceFunctionInputs(List.of("y"))
+                        .sourceFunctionInputs(List.of("z3"))
                         .build())
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.GOTO_LABEL, "", additionalArguments));
@@ -115,7 +115,7 @@ public class Main {
         return program;
     }
 
-    private static void executeProgram(SProgram program, int input) {
+    private static void executeProgram(SProgram program, long input) {
         SProgramRunner programRunner = SComponentFactory.createProgramRunner(program);
         System.out.println();
         System.out.println("Executing program [" + program.getName() + "] on input: " + input);

@@ -35,7 +35,7 @@ public class SProgramRunnerImpl implements SProgramRunner {
     }
 
     @Override
-    public long run(Integer... input) {
+    public long run(Long... input) {
 
         // empty program edge case
         if (program.length() == 0) {
