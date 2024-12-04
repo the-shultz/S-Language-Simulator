@@ -98,7 +98,11 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
         String[] functionCallParts = input.split(",");
 
         String functionName = functionCallParts[0];
-        List<String> subFunctionInputs = List.of(functionCallParts).subList(1, functionCallParts.length);
+        List<String> subFunctionInputs = List.of(functionCallParts)
+                .subList(1, functionCallParts.length)
+                .stream()
+                .map(String::trim)
+                .toList();
         SProgram subFunctionProgram = functions.get(functionName);
         AdditionalArguments additionalArguments = AdditionalArguments.builder()
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
