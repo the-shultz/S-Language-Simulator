@@ -43,6 +43,11 @@ public abstract class AbstractInstruction implements SInstruction {
     abstract protected String internalToVerboseString();
 
     @Override
+    public boolean isSynthetic() {
+        return false;
+    }
+
+    @Override
     public SInstruction next() {
         return nextInstructionInOrder;
     }

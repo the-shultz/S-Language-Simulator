@@ -6,6 +6,7 @@ import mta.computional.slanguage.simpl.instruction.basic.impl.Decrease;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Increase;
 import mta.computional.slanguage.simpl.instruction.basic.impl.JumpNoZero;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Neutral;
+import mta.computional.slanguage.simpl.instruction.function.impl.ApplyFunction;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.AssignZero;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.Assignment;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.ConstantAssignment;
@@ -40,6 +41,7 @@ public interface SComponentFactory {
             case ASSIGNMENT -> new Assignment(variableName, additionalArguments.getAssignedVariableName());
             case GOTO_LABEL -> new GotoLabel(variableName, additionalArguments.getGotoLabel());
             case CONSTANT_ASSIGNMENT -> new ConstantAssignment(variableName, additionalArguments.getConstantValue());
+            case APPLY_FUNCTION -> new ApplyFunction(variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
         };
     }
 
@@ -57,6 +59,7 @@ public interface SComponentFactory {
             case ASSIGNMENT -> new Assignment(instructionLabel, variableName, additionalArguments.getAssignedVariableName());
             case GOTO_LABEL -> new GotoLabel(instructionLabel, variableName, additionalArguments.getGotoLabel());
             case CONSTANT_ASSIGNMENT -> new ConstantAssignment(instructionLabel, variableName, additionalArguments.getConstantValue());
+            case APPLY_FUNCTION -> new ApplyFunction(instructionLabel, variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
         };
     }
 

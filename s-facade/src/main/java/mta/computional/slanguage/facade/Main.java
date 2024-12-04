@@ -8,6 +8,9 @@ import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
+import java.util.List;
+import java.util.Map;
+
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
 public class Main {
@@ -66,6 +69,19 @@ public class Main {
     }
 
     private static SProgram syntheticSugars() {
+
+        SProgram idProgram = SComponentFactory.createEmptyProgram("ID");
+
+        Label A1 = SComponentFactory.createLabel("A1");
+        AdditionalArguments idAdditionalArguments = AdditionalArguments.builder().jumpNotZeroLabel(A1).build();
+        idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", idAdditionalArguments));
+        idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "z1"));
+        idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "z1", AdditionalArguments.builder().jumpNotZeroLabel(EXIT).build()));
+        idProgram.addInstruction(SComponentFactory.createInstructionWithLabel(A1, SInstructionRegistry.DECREASE, "x1"));
+        idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y"));
+        idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", idAdditionalArguments));
+
+
         SProgram program = SComponentFactory.createEmptyProgram("Synthetic Sugars");
         Label L1 = SComponentFactory.createLabel("L1");
         AdditionalArguments additionalArguments = AdditionalArguments
@@ -74,6 +90,11 @@ public class Main {
                 .gotoLabel(L1)
                 .assignedVariableName("x1")
                 .constantValue(3)
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(idProgram.getName())
+                        .functionsImplementations(Map.of(idProgram.getName(), idProgram))
+                        .sourceFunctionInputs(List.of("y"))
+                        .build())
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.GOTO_LABEL, "", additionalArguments));
         program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.INCREASE, "z1"));
@@ -81,6 +102,7 @@ public class Main {
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, "x1"));
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "z3", additionalArguments));
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.CONSTANT_ASSIGNMENT, "z3", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "z4", additionalArguments));
 
         System.out.println(program.toVerboseString());
         executeProgram(program, 7);

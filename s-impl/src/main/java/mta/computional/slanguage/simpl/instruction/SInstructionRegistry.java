@@ -13,7 +13,10 @@ public enum SInstructionRegistry {
     ZERO_VARIABLE("Assign Zero"),
     GOTO_LABEL("Go To Label"),
     ASSIGNMENT("Variable Assignment"),
-    CONSTANT_ASSIGNMENT("Constant Assignment");
+    CONSTANT_ASSIGNMENT("Constant Assignment"),
+
+    // FUNCTIONS
+    APPLY_FUNCTION("Apply Function");
 
     private final String name;
 

@@ -18,11 +18,6 @@ public abstract class AbstractBasicInstruction extends AbstractInstruction {
     }
 
     @Override
-    public boolean isSynthetic() {
-        return false;
-    }
-
-    @Override
     public List<SInstruction> expand(ProgramActions context) {
         return List.of(this);
     }
