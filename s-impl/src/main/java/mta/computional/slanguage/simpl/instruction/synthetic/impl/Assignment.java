@@ -38,8 +38,8 @@ public class Assignment extends AbstractSyntheticInstruction {
     }
 
     @Override
-    public String toVerboseString() {
-        return super.toVerboseString() + variableName + " <- " + assignedVariableName;
+    protected String internalToVerboseString() {
+        return variableName + " <- " + assignedVariableName;
     }
 
     @Override

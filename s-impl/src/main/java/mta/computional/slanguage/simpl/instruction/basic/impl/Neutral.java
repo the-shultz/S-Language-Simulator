@@ -29,8 +29,8 @@ public class Neutral extends AbstractBasicInstruction {
     }
 
     @Override
-    public String toVerboseString() {
-        return super.toVerboseString() + variableName + " <- " + variableName;
+    protected String internalToVerboseString() {
+        return variableName + " <- " + variableName;
     }
 
     @Override

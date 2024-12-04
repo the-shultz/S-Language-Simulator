@@ -37,8 +37,8 @@ public class GotoLabel extends AbstractSyntheticInstruction {
     }
 
     @Override
-    public String toVerboseString() {
-        return super.toVerboseString() + "GOTO " + jumpLabel.toVerboseString();
+    protected String internalToVerboseString() {
+        return "GOTO " + jumpLabel.toVerboseString();
     }
 
     @Override

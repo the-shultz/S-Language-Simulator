@@ -38,8 +38,8 @@ public class ConstantAssignment extends AbstractSyntheticInstruction {
     }
 
     @Override
-    public String toVerboseString() {
-        return super.toVerboseString() + variableName + " <- " + constantValue;
+    protected String internalToVerboseString() {
+        return variableName + " <- " + constantValue;
     }
 
     @Override

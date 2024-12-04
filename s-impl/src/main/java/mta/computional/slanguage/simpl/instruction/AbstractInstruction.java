@@ -37,8 +37,10 @@ public abstract class AbstractInstruction implements SInstruction {
 
     @Override
     public String toVerboseString() {
-        return String.format("[ %2s ] ", getLabel().toVerboseString());
+        return String.format("[ %2s ] %s", getLabel().toVerboseString(), internalToVerboseString());
     }
+
+    abstract protected String internalToVerboseString();
 
     @Override
     public SInstruction next() {

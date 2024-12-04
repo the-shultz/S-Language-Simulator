@@ -35,8 +35,8 @@ public class AssignZero extends AbstractSyntheticInstruction {
     }
 
     @Override
-    public String toVerboseString() {
-        return super.toVerboseString() + variableName + " <- 0";
+    protected String internalToVerboseString() {
+        return variableName + " <- 0";
     }
 
     @Override

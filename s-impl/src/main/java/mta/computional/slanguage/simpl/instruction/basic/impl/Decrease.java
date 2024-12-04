@@ -28,8 +28,8 @@ public class Decrease extends AbstractBasicInstruction {
     }
 
     @Override
-    public String toVerboseString() {
-        return super.toVerboseString() + variableName + " <- " + variableName + " - 1";
+    protected String internalToVerboseString() {
+        return variableName + " <- " + variableName + " - 1";
     }
 
     @Override

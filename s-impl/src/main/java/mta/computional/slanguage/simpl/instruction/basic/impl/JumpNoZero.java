@@ -31,8 +31,8 @@ public class JumpNoZero extends AbstractBasicInstruction {
     }
 
     @Override
-    public String toVerboseString() {
-        return super.toVerboseString() + "IF " + variableName + " != 0 GOTO " + jumpLabel.toVerboseString();
+    protected String internalToVerboseString() {
+        return "IF " + variableName + " != 0 GOTO " + jumpLabel.toVerboseString();
     }
 
     @Override
