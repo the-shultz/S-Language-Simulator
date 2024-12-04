@@ -8,6 +8,7 @@ import mta.computional.slanguage.simpl.instruction.basic.impl.JumpNoZero;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Neutral;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.AssignZero;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.Assignment;
+import mta.computional.slanguage.simpl.instruction.synthetic.impl.ConstantAssignment;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.GotoLabel;
 import mta.computional.slanguage.simpl.label.LabelImpl;
 import mta.computional.slanguage.simpl.program.SProgramImpl;
@@ -38,6 +39,7 @@ public interface SComponentFactory {
             case ZERO_VARIABLE -> new AssignZero(variableName);
             case ASSIGNMENT -> new Assignment(variableName, additionalArguments.getAssignedVariableName());
             case GOTO_LABEL -> new GotoLabel(variableName, additionalArguments.getGotoLabel());
+            case CONSTANT_ASSIGNMENT -> new ConstantAssignment(variableName, additionalArguments.getConstantValue());
         };
     }
 
@@ -54,6 +56,7 @@ public interface SComponentFactory {
             case ZERO_VARIABLE -> new AssignZero(instructionLabel, variableName);
             case ASSIGNMENT -> new Assignment(instructionLabel, variableName, additionalArguments.getAssignedVariableName());
             case GOTO_LABEL -> new GotoLabel(instructionLabel, variableName, additionalArguments.getGotoLabel());
+            case CONSTANT_ASSIGNMENT -> new ConstantAssignment(instructionLabel, variableName, additionalArguments.getConstantValue());
         };
     }
 
