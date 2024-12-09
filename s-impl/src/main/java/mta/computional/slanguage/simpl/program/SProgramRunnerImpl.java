@@ -2,6 +2,7 @@ package mta.computional.slanguage.simpl.program;
 
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
+import mta.computional.slanguage.smodel.api.program.ExecutionContext;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
@@ -32,6 +33,35 @@ public class SProgramRunnerImpl implements SProgramRunner {
         return Optional
                 .ofNullable(variables.get(variableName))
                 .orElse(0L);
+    }
+
+    @Override
+    public ExecutionContext duplicate() {
+        return generateDuplicateFrom(variables);
+    }
+
+    private ExecutionContext generateDuplicateFrom(Map<String, Long> source) {
+        return new ExecutionContext() {
+
+            private final Map<String, Long> variables = new HashMap<>(source);
+
+            @Override
+            public void updateVariable(String name, long value) {
+                variables.put(name, value);
+            }
+
+            @Override
+            public long getVariable(String variableName) {
+                return Optional
+                        .ofNullable(variables.get(variableName))
+                        .orElse(0L);
+            }
+
+            @Override
+            public ExecutionContext duplicate() {
+                return generateDuplicateFrom(variables);
+            }
+        };
     }
 
     @Override

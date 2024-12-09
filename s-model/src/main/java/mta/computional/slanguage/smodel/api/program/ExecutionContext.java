@@ -6,4 +6,5 @@ public interface ExecutionContext {
 
     long getVariable(String variableName);
 
+    ExecutionContext duplicate();
 }

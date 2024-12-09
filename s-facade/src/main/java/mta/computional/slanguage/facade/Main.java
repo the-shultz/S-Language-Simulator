@@ -70,6 +70,15 @@ public class Main {
 
     private static SProgram syntheticSugars() {
 
+        /*
+        ID
+            if x1 != 0 goto A1
+            z1 <- z1 + 1
+            if z1 != 0 goto EXIT
+        A1: x1 <- x1 - 1
+            y <- y + 1
+            if x1 != 0 goto A1
+        * */
         SProgram idProgram = SComponentFactory.createEmptyProgram("ID");
 
         Label A1 = SComponentFactory.createLabel("A1");
@@ -81,7 +90,16 @@ public class Main {
         idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y"));
         idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", idAdditionalArguments));
 
-
+        /*
+        Synthetic Sugars
+                goto L1
+            L1: z1 <- z1 + 1
+                y <- x1
+                x1 <- 0
+                if z3 != 0 goto L1
+                z3 <- 3
+                z4 <- ID(ID ze)
+        * */
         SProgram program = SComponentFactory.createEmptyProgram("Synthetic Sugars");
         Label L1 = SComponentFactory.createLabel("L1");
         AdditionalArguments additionalArguments = AdditionalArguments

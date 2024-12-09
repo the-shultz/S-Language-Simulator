@@ -98,11 +98,13 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
         String[] functionCallParts = input.split(",");
 
         String functionName = functionCallParts[0];
+
         List<String> subFunctionInputs = List.of(functionCallParts)
                 .subList(1, functionCallParts.length)
                 .stream()
                 .map(String::trim)
                 .toList();
+
         SProgram subFunctionProgram = functions.get(functionName);
         AdditionalArguments additionalArguments = AdditionalArguments.builder()
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
@@ -112,18 +114,12 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
                         .build())
                 .build();
 
-        // store original Y since sub function will override it
-        long originalY = context.getVariable("y");
+        SInstruction subFunctionInstruction = SComponentFactory.createInstruction(APPLY_FUNCTION, "y", additionalArguments);
 
         // create and execute sub function.
-        SInstruction subFunctionInstruction = SComponentFactory.createInstruction(APPLY_FUNCTION, "y", additionalArguments);
-        subFunctionInstruction.execute(context);
-        long subFunctionResult = context.getVariable("y");
-
-        // restore original y
-        context.updateVariable("y", originalY);
-
-        return subFunctionResult;
+        ExecutionContext subFunctionContext = context.duplicate();
+        subFunctionInstruction.execute(subFunctionContext);
+        return subFunctionContext.getVariable("y");
     }
 
     private FunctionInputType analyzeInput(String input) {
