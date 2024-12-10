@@ -1,5 +1,6 @@
 package mta.computional.slanguage.simpl.instruction.synthetic;
 
+
 import mta.computional.slanguage.simpl.instruction.AbstractInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 

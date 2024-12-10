@@ -3,12 +3,14 @@ package mta.computional.slanguage.simpl.instruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 
+import java.util.List;
+
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public abstract class AbstractInstruction implements SInstruction {
 
     private final Label label;
-    protected final String variableName;
+    protected String variableName;
     private SInstruction nextInstructionInOrder;
 
     public AbstractInstruction(String variableName) {
@@ -31,8 +33,8 @@ public abstract class AbstractInstruction implements SInstruction {
     }
 
     @Override
-    public String getVariable() {
-        return variableName;
+    public List<String> getVariables() {
+        return List.of(variableName);
     }
 
     @Override
@@ -55,5 +57,12 @@ public abstract class AbstractInstruction implements SInstruction {
     @Override
     public void setNextInstructionInOrder(SInstruction nextInstructionInOrder) {
         this.nextInstructionInOrder = nextInstructionInOrder;
+    }
+
+    @Override
+    public void replaceVariable(String oldVariable, String newVariable) {
+        if (variableName.equals(oldVariable)) {
+            variableName = newVariable;
+        }
     }
 }

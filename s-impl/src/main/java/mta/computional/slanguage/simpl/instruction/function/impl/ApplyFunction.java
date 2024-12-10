@@ -1,10 +1,7 @@
 package mta.computional.slanguage.simpl.instruction.function.impl;
 
-import com.sun.source.tree.BreakTree;
 import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
-import mta.computional.slanguage.simpl.instruction.AbstractInstruction;
-import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.simpl.instruction.synthetic.AbstractSyntheticInstruction;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
@@ -13,11 +10,9 @@ import mta.computional.slanguage.smodel.api.program.ProgramActions;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
-import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.APPLY_FUNCTION;
+import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.*;
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class ApplyFunction extends AbstractSyntheticInstruction {
@@ -59,7 +54,74 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
 
     @Override
     public List<SInstruction> expand(ProgramActions context) {
-        return List.of();
+
+        SProgram sourceProgram = functions.get(sourceFunctionName).duplicate();
+
+        /*
+         build list of used variables in the source program.
+         it includes
+              input variables (x1..xn | in the size of expected input);
+              working variables (z1..zm | according to the program usage);
+              change y to the variableName
+        */
+        Map<String, String> variablesReplacements = new HashMap<>();
+        for (int i = 1; i <= inputs.size(); i++) {
+            variablesReplacements.put("x" + i, context.createFreeWorkingVariable());
+        }
+        sourceProgram
+                .getUsedVariables()
+                // add only variables that weren't added beforehand as part of the input traversal (x1..xn) as program might not use all of its inputs
+                .forEach(variable -> variablesReplacements.putIfAbsent(variable, context.createFreeWorkingVariable()));
+
+        variablesReplacements.put("y", variableName);
+
+        // change source program variables (input & y) to the list of free variables.
+        sourceProgram.replaceVariable(variablesReplacements);
+
+        // todo add labels replacement
+
+        List<SInstruction> expansion = new ArrayList<>();
+
+        // add an instruction to zero the variable name
+        expansion.add(SComponentFactory.createInstruction(ZERO_VARIABLE, variableName));
+
+        // expand the source inputs (get a list of instructions derived from the source inputs) use the synthetic sugar for that v <- v'
+        for (int i = 1; i <= inputs.size(); i++) {
+            String input = inputs.get(i-1);
+            String freeVariable = variablesReplacements.get("x" + i);
+            FunctionInputType functionInputType = analyzeInput(input);
+
+            SInstruction inputInstruction = switch (functionInputType) {
+
+                // INPUT: z3 --> z1 <- z3
+                case VARIABLE ->
+                        SComponentFactory.createInstruction(ASSIGNMENT, freeVariable, AdditionalArguments.builder().assignedVariableName(input).build());
+
+                // INPUT: 4 --> z1 <- 4
+                case CONSTANT ->
+                        SComponentFactory.createInstruction(CONSTANT_ASSIGNMENT, freeVariable, AdditionalArguments.builder().constantValue(Integer.parseInt(input)).build());
+
+                // INPUT: (ID, z3) --> z1 <- ID(z3)
+                case FUNCTION -> {
+                    input = input.substring(1, input.length() - 1);
+                    String[] functionCallParts = input.split(",");
+
+                    yield SComponentFactory.createInstruction(APPLY_FUNCTION, freeVariable, AdditionalArguments.builder().
+                            functionCallData(AdditionalArguments.FunctionCallData.builder()
+                                    .sourceFunctionName(functionCallParts[0])
+                                    .functionsImplementations(functions)
+                                    .sourceFunctionInputs(Arrays.stream(functionCallParts).skip(1).toList())
+                                    .build())
+                            .build());
+                }
+            };
+
+            expansion.add(inputInstruction);
+        }
+
+        // add the list of instructions of the source (now altered) program
+        expansion.addAll(sourceProgram.getInstructions());
+        return expansion;
     }
 
     @Override
@@ -88,7 +150,6 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
             case VARIABLE -> context.getVariable(input);
             case CONSTANT -> Long.parseLong(input);
             case FUNCTION -> applyFunction(context, input);
-
         };
     }
 

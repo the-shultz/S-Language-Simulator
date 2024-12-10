@@ -89,17 +89,24 @@ public class Main {
         idProgram.addInstruction(SComponentFactory.createInstructionWithLabel(A1, SInstructionRegistry.DECREASE, "x1"));
         idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y"));
         idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", idAdditionalArguments));
+/*        System.out.println(idProgram.toVerboseString());
+        executeProgram(idProgram, 7);
 
-        /*
-        Synthetic Sugars
+        System.out.println();
+        SProgram expandedProgram = idProgram.expand();
+        System.out.println(expandedProgram.toVerboseString());
+        executeProgram(expandedProgram, 7);
+*/
+
+/*        Synthetic Sugars
                 goto L1
             L1: z1 <- z1 + 1
                 y <- x1
                 x1 <- 0
                 if z3 != 0 goto L1
                 z3 <- 3
-                z4 <- ID(ID ze)
-        * */
+                z4 <- ID( ID(z3) )
+        */
         SProgram program = SComponentFactory.createEmptyProgram("Synthetic Sugars");
         Label L1 = SComponentFactory.createLabel("L1");
         AdditionalArguments additionalArguments = AdditionalArguments
@@ -111,7 +118,8 @@ public class Main {
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
                         .sourceFunctionName(idProgram.getName())
                         .functionsImplementations(Map.of(idProgram.getName(), idProgram))
-                        .sourceFunctionInputs(List.of("(ID, z3)"))
+//                        .sourceFunctionInputs(List.of("(ID, z3)"))
+                        .sourceFunctionInputs(List.of("z3"))
                         .build())
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.GOTO_LABEL, "", additionalArguments));
@@ -129,8 +137,7 @@ public class Main {
         SProgram expandedProgram = program.expand();
         System.out.println(expandedProgram.toVerboseString());
         executeProgram(expandedProgram, 7);
-
-        return program;
+        return idProgram;
     }
 
     private static void executeProgram(SProgram program, long input) {

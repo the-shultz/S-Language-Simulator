@@ -4,7 +4,8 @@ import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
 public interface SProgram extends ProgramActions, Serializable {
 
@@ -17,4 +18,10 @@ public interface SProgram extends ProgramActions, Serializable {
     SProgram expand();
     SInstruction getInstructionAt(int index);
     SInstruction getFirstInstructionByLabel(Label label);
+
+    SProgram duplicate();
+    Set<String> getUsedVariables();
+    Set<Label> getLabels();
+
+    Collection<? extends SInstruction> getInstructions();
 }

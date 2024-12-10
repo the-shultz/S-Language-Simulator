@@ -16,7 +16,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class Assignment extends AbstractSyntheticInstruction {
 
-    private final String assignedVariableName;
+    private String assignedVariableName;
 
     public Assignment(String variableName, String assignedVariableName) {
         this(EMPTY, variableName, assignedVariableName);
@@ -35,6 +35,14 @@ public class Assignment extends AbstractSyntheticInstruction {
     @Override
     public long decode() {
         return 0;
+    }
+
+    @Override
+    public void replaceVariable(String oldVariable, String newVariable) {
+        super.replaceVariable(oldVariable, newVariable);
+        if (assignedVariableName.equals(oldVariable)) {
+            assignedVariableName = newVariable;
+        }
     }
 
     @Override

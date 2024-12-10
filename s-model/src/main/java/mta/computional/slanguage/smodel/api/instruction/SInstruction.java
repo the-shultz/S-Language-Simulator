@@ -13,7 +13,7 @@ public interface SInstruction extends Serializable {
 
     String getName();
     long decode();
-    String getVariable();
+    List<String> getVariables();
 
     boolean hasLabel();
     Label getLabel();
@@ -28,6 +28,8 @@ public interface SInstruction extends Serializable {
     SInstruction next();
     void setNextInstructionInOrder(SInstruction nextInstructionInOrder);
 
+    void replaceVariable(String oldVariable, String newVariable);
+
     SInstruction STOP = new SInstruction() {
         @Override
         public String getName() {
@@ -40,8 +42,8 @@ public interface SInstruction extends Serializable {
         }
 
         @Override
-        public String getVariable() {
-            return "";
+        public List<String> getVariables() {
+            return List.of();
         }
 
         @Override
@@ -86,6 +88,11 @@ public interface SInstruction extends Serializable {
 
         @Override
         public void setNextInstructionInOrder(SInstruction nextInstructionInOrder) {
+
+        }
+
+        @Override
+        public void replaceVariable(String oldVariable, String newVariable) {
 
         }
     };

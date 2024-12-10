@@ -7,10 +7,7 @@ import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -53,8 +50,8 @@ public class SProgramImpl implements SProgram {
         nextWorkingVariableId = 0;
         workingVariables = instructions
                 .stream()
-                .map(SInstruction::getVariable)
-                .filter(variable -> variable.startsWith("z"))
+                .flatMap(s -> s.getVariables().stream())
+                //.filter(variable -> variable.startsWith("z"))
                 .collect(Collectors.toSet());
     }
 
@@ -75,9 +72,7 @@ public class SProgramImpl implements SProgram {
         instruction.setNextInstructionInOrder(STOP);
 
         labels.add(instruction.getLabel());
-        if (instruction.getVariable().startsWith("z")) {
-            workingVariables.add(instruction.getVariable());
-        }
+        workingVariables.addAll(instruction.getVariables());
     }
 
     @Override
@@ -121,6 +116,16 @@ public class SProgramImpl implements SProgram {
     }
 
     @Override
+    public void replaceVariable(Map<String, String> workingVariablesReplacements) {
+        workingVariablesReplacements
+                .forEach((oldVariable, newVariable) -> {
+                    instructions.forEach(instruction -> instruction.replaceVariable(oldVariable, newVariable));
+                    workingVariables.remove(oldVariable);
+                    workingVariables.add(newVariable);
+        });
+    }
+
+    @Override
     public int length() {
         return instructions.size();
     }
@@ -161,6 +166,26 @@ public class SProgramImpl implements SProgram {
             }
         }
         return STOP;
+    }
+
+    @Override
+    public SProgram duplicate() {
+        return new SProgramImpl(name, instructions);
+    }
+
+    @Override
+    public Set<String> getUsedVariables() {
+        return workingVariables;
+    }
+
+    @Override
+    public Set<Label> getLabels() {
+        return labels;
+    }
+
+    @Override
+    public Collection<? extends SInstruction> getInstructions() {
+        return instructions;
     }
 
     private List<SInstruction> deepCopyInstructions() {
