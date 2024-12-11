@@ -53,7 +53,7 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
     }
 
     @Override
-    public List<SInstruction> expand(ProgramActions context) {
+    public List<SInstruction> internalExpand(ProgramActions context) {
 
         SProgram sourceProgram = functions.get(sourceFunctionName).duplicate();
 

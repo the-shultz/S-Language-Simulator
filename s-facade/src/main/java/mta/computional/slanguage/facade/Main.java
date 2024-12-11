@@ -109,6 +109,7 @@ public class Main {
         */
         SProgram program = SComponentFactory.createEmptyProgram("Synthetic Sugars");
         Label L1 = SComponentFactory.createLabel("L1");
+        Label L2 = SComponentFactory.createLabel("L2");
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
                 .jumpNotZeroLabel(L1)
@@ -125,7 +126,7 @@ public class Main {
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.GOTO_LABEL, "", additionalArguments));
         program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.INCREASE, "z1"));
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, "y", additionalArguments));
-        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, "x1"));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(L2, SInstructionRegistry.ZERO_VARIABLE, "x1"));
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "z3", additionalArguments));
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.CONSTANT_ASSIGNMENT, "z3", additionalArguments));
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "z4", additionalArguments));

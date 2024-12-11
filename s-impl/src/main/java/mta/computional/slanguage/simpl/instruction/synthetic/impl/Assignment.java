@@ -51,7 +51,7 @@ public class Assignment extends AbstractSyntheticInstruction {
     }
 
     @Override
-    public List<SInstruction> expand(ProgramActions context) {
+    public List<SInstruction> internalExpand(ProgramActions context) {
         Label A = context.createAvailableLabel();
         Label B = context.createAvailableLabel();
         Label L = context.createAvailableLabel();

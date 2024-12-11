@@ -40,7 +40,7 @@ public class AssignZero extends AbstractSyntheticInstruction {
     }
 
     @Override
-    public List<SInstruction> expand(ProgramActions context) {
+    public List<SInstruction> internalExpand(ProgramActions context) {
         Label L = context.createAvailableLabel();
         AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpNotZeroLabel(L).build();
 

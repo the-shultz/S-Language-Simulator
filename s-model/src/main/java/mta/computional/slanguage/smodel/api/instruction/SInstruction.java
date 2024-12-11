@@ -30,6 +30,8 @@ public interface SInstruction extends Serializable {
 
     void replaceVariable(String oldVariable, String newVariable);
 
+    void setDerivedFrom(SInstruction derivedFrom);
+
     SInstruction STOP = new SInstruction() {
         @Override
         public String getName() {
@@ -95,5 +97,11 @@ public interface SInstruction extends Serializable {
         public void replaceVariable(String oldVariable, String newVariable) {
 
         }
+
+        @Override
+        public void setDerivedFrom(SInstruction derivedFrom) {
+
+        }
+
     };
 }

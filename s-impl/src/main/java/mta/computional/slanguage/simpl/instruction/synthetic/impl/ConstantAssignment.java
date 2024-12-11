@@ -43,7 +43,7 @@ public class ConstantAssignment extends AbstractSyntheticInstruction {
     }
 
     @Override
-    public List<SInstruction> expand(ProgramActions context) {
+    public List<SInstruction> internalExpand(ProgramActions context) {
 
         List<SInstruction> result = new ArrayList<>();
         result.add(SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, variableName));

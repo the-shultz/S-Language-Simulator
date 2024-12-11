@@ -12,6 +12,7 @@ public abstract class AbstractInstruction implements SInstruction {
     private final Label label;
     protected String variableName;
     private SInstruction nextInstructionInOrder;
+    private SInstruction deriveFromInstruction;
 
     public AbstractInstruction(String variableName) {
         this(EMPTY, variableName);
@@ -20,6 +21,7 @@ public abstract class AbstractInstruction implements SInstruction {
     public AbstractInstruction(Label label, String variableName) {
         this.label = label;
         this.variableName = variableName;
+        deriveFromInstruction = null;
     }
 
     @Override
@@ -39,7 +41,11 @@ public abstract class AbstractInstruction implements SInstruction {
 
     @Override
     public String toVerboseString() {
-        return String.format("[ %2s ] %s", getLabel().toVerboseString(), internalToVerboseString());
+        String verboseString = String.format("[ %2s ] %s", getLabel().toVerboseString(), internalToVerboseString());
+        if (deriveFromInstruction != null) {
+            verboseString += "      << " + deriveFromInstruction.toVerboseString();
+        }
+        return verboseString;
     }
 
     abstract protected String internalToVerboseString();
@@ -64,5 +70,10 @@ public abstract class AbstractInstruction implements SInstruction {
         if (variableName.equals(oldVariable)) {
             variableName = newVariable;
         }
+    }
+
+    @Override
+    public void setDerivedFrom(SInstruction derivedFrom) {
+        deriveFromInstruction = derivedFrom;
     }
 }

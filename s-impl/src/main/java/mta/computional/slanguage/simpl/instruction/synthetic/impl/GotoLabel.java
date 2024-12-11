@@ -42,7 +42,7 @@ public class GotoLabel extends AbstractSyntheticInstruction {
     }
 
     @Override
-    public List<SInstruction> expand(ProgramActions context) {
+    public List<SInstruction> internalExpand(ProgramActions context) {
         String freeWorkingVariable = context.createFreeWorkingVariable();
         AdditionalArguments additionalArguments = AdditionalArguments.builder().jumpNotZeroLabel(jumpLabel).build();
         return List.of(
