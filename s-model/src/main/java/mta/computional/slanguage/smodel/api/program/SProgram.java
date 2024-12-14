@@ -21,7 +21,7 @@ public interface SProgram extends ProgramActions, Serializable {
 
     SProgram duplicate();
     Set<String> getUsedVariables();
-    Set<Label> getLabels();
+    Set<Label> getUsedLabels();
 
     Collection<? extends SInstruction> getInstructions();
 }

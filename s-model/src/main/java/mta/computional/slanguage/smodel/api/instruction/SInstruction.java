@@ -1,7 +1,7 @@
 package mta.computional.slanguage.smodel.api.instruction;
 
-import mta.computional.slanguage.smodel.api.program.ExecutionContext;
 import mta.computional.slanguage.smodel.api.label.Label;
+import mta.computional.slanguage.smodel.api.program.ExecutionContext;
 import mta.computional.slanguage.smodel.api.program.ProgramActions;
 
 import java.io.Serializable;
@@ -29,6 +29,8 @@ public interface SInstruction extends Serializable {
     void setNextInstructionInOrder(SInstruction nextInstructionInOrder);
 
     void replaceVariable(String oldVariable, String newVariable);
+
+    void replaceLabel(Label oldLabel, Label newLabel);
 
     void setDerivedFrom(SInstruction derivedFrom);
 
@@ -100,6 +102,11 @@ public interface SInstruction extends Serializable {
 
         @Override
         public void setDerivedFrom(SInstruction derivedFrom) {
+
+        }
+
+        @Override
+        public void replaceLabel(Label oldLabel, Label newLabel) {
 
         }
 

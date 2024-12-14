@@ -9,4 +9,5 @@ public interface ProgramActions {
     String createFreeWorkingVariable();
 
     void replaceVariable(Map<String, String> workingVariablesReplacements);
+    void replaceLabels(Map<Label, Label> labelsReplacements);
 }

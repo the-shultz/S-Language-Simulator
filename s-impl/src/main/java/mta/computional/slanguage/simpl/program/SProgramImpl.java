@@ -51,7 +51,6 @@ public class SProgramImpl implements SProgram {
         workingVariables = instructions
                 .stream()
                 .flatMap(s -> s.getVariables().stream())
-                //.filter(variable -> variable.startsWith("z"))
                 .collect(Collectors.toSet());
     }
 
@@ -126,6 +125,16 @@ public class SProgramImpl implements SProgram {
     }
 
     @Override
+    public void replaceLabels(Map<Label, Label> labelsReplacements) {
+        labelsReplacements
+                .forEach((oldLabel, newLabel) -> {
+                    instructions.forEach(instruction -> instruction.replaceLabel(oldLabel, newLabel));
+                    labels.remove(oldLabel);
+                    labels.add(newLabel);
+                });
+    }
+
+    @Override
     public int length() {
         return instructions.size();
     }
@@ -179,7 +188,7 @@ public class SProgramImpl implements SProgram {
     }
 
     @Override
-    public Set<Label> getLabels() {
+    public Set<Label> getUsedLabels() {
         return labels;
     }
 

@@ -11,6 +11,7 @@ import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.*;
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
@@ -78,7 +79,13 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
         // change source program variables (input & y) to the list of free variables.
         sourceProgram.replaceVariable(variablesReplacements);
 
-        // todo add labels replacement
+        // collect and replace labels in the source program
+        Map<Label, Label> labelsReplacements =
+            sourceProgram
+                    .getUsedLabels()
+                    .stream()
+                    .collect(Collectors.toMap(l -> l, sourceLabel -> context.createAvailableLabel()));
+        sourceProgram.replaceLabels(labelsReplacements);
 
         List<SInstruction> expansion = new ArrayList<>();
 

@@ -1,7 +1,7 @@
 package mta.computional.slanguage.simpl.instruction;
 
-import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
+import mta.computional.slanguage.smodel.api.label.Label;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public abstract class AbstractInstruction implements SInstruction {
 
-    private final Label label;
+    private Label label;
     protected String variableName;
     private SInstruction nextInstructionInOrder;
     private SInstruction deriveFromInstruction;
@@ -69,6 +69,13 @@ public abstract class AbstractInstruction implements SInstruction {
     public void replaceVariable(String oldVariable, String newVariable) {
         if (variableName.equals(oldVariable)) {
             variableName = newVariable;
+        }
+    }
+
+    @Override
+    public void replaceLabel(Label oldLabel, Label newLabel) {
+        if (label.equals(oldLabel)) {
+            label = newLabel;
         }
     }
 

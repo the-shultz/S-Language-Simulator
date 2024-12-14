@@ -15,7 +15,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class GotoLabel extends AbstractSyntheticInstruction {
 
-    private final Label jumpLabel;
+    private Label jumpLabel;
 
     public GotoLabel(String variableName, Label jumpLabel) {
         this(EMPTY, variableName, jumpLabel);
@@ -49,6 +49,14 @@ public class GotoLabel extends AbstractSyntheticInstruction {
                 SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, freeWorkingVariable),
                 SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, freeWorkingVariable, additionalArguments)
         );
+    }
+
+    @Override
+    public void replaceLabel(Label oldLabel, Label newLabel) {
+        super.replaceLabel(oldLabel, newLabel);
+        if (jumpLabel.equals(oldLabel)) {
+            jumpLabel = newLabel;
+        }
     }
 
     @Override

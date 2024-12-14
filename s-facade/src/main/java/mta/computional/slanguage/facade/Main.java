@@ -72,21 +72,21 @@ public class Main {
 
         /*
         ID
-            if x1 != 0 goto A1
+            if x1 != 0 goto L1
             z1 <- z1 + 1
             if z1 != 0 goto EXIT
-        A1: x1 <- x1 - 1
+        L1: x1 <- x1 - 1
             y <- y + 1
-            if x1 != 0 goto A1
+            if x1 != 0 goto L1
         * */
         SProgram idProgram = SComponentFactory.createEmptyProgram("ID");
 
-        Label A1 = SComponentFactory.createLabel("A1");
-        AdditionalArguments idAdditionalArguments = AdditionalArguments.builder().jumpNotZeroLabel(A1).build();
+        Label idL1 = SComponentFactory.createLabel("L1");
+        AdditionalArguments idAdditionalArguments = AdditionalArguments.builder().jumpNotZeroLabel(idL1).build();
         idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", idAdditionalArguments));
         idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "z1"));
         idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "z1", AdditionalArguments.builder().jumpNotZeroLabel(EXIT).build()));
-        idProgram.addInstruction(SComponentFactory.createInstructionWithLabel(A1, SInstructionRegistry.DECREASE, "x1"));
+        idProgram.addInstruction(SComponentFactory.createInstructionWithLabel(idL1, SInstructionRegistry.DECREASE, "x1"));
         idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y"));
         idProgram.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x1", idAdditionalArguments));
 /*        System.out.println(idProgram.toVerboseString());
@@ -102,7 +102,7 @@ public class Main {
                 goto L1
             L1: z1 <- z1 + 1
                 y <- x1
-                x1 <- 0
+            L2: x1 <- 0
                 if z3 != 0 goto L1
                 z3 <- 3
                 z4 <- ID( ID(z3) )

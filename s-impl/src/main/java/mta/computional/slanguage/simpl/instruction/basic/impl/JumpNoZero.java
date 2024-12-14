@@ -9,7 +9,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class JumpNoZero extends AbstractBasicInstruction {
 
-    private final Label jumpLabel;
+    private Label jumpLabel;
 
     public JumpNoZero(String variable, Label jumpLabel) {
         this(EMPTY, variable, jumpLabel);
@@ -33,6 +33,14 @@ public class JumpNoZero extends AbstractBasicInstruction {
     @Override
     protected String internalToVerboseString() {
         return "IF " + variableName + " != 0 GOTO " + jumpLabel.toVerboseString();
+    }
+
+    @Override
+    public void replaceLabel(Label oldLabel, Label newLabel) {
+        super.replaceLabel(oldLabel, newLabel);
+        if (jumpLabel.equals(oldLabel)) {
+            jumpLabel = newLabel;
+        }
     }
 
     @Override
