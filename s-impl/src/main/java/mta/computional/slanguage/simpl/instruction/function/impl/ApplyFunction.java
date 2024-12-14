@@ -94,7 +94,7 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
 
         // expand the source inputs (get a list of instructions derived from the source inputs) use the synthetic sugar for that v <- v'
         for (int i = 1; i <= inputs.size(); i++) {
-            String input = inputs.get(i-1);
+            String input = inputs.get(i-1).trim();
             String freeVariable = variablesReplacements.get("x" + i);
             FunctionInputType functionInputType = analyzeInput(input);
 

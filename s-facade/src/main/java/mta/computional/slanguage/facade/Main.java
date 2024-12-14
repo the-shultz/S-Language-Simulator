@@ -119,8 +119,8 @@ public class Main {
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
                         .sourceFunctionName(idProgram.getName())
                         .functionsImplementations(Map.of(idProgram.getName(), idProgram))
-//                        .sourceFunctionInputs(List.of("(ID, z3)"))
-                        .sourceFunctionInputs(List.of("z3"))
+                        .sourceFunctionInputs(List.of("(ID, z3)"))
+//                        .sourceFunctionInputs(List.of("z3"))
                         .build())
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.GOTO_LABEL, "", additionalArguments));
