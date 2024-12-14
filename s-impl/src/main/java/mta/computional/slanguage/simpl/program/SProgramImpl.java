@@ -140,10 +140,13 @@ public class SProgramImpl implements SProgram {
     }
 
     @Override
-    public SProgram expand() {
+    public SProgram expand(int degree) {
         List<SInstruction> expandInstructions = deepCopyInstructions();
+        int degreeCounter = 0;
         boolean hasSynthetic;
         do {
+            degreeCounter++;
+
             expandInstructions = expandInstructions
                     .stream()
                     .flatMap(instruction -> instruction.expand(this).stream())
@@ -153,7 +156,7 @@ public class SProgramImpl implements SProgram {
                     .stream()
                     .anyMatch(SInstruction::isSynthetic);
 
-        } while (hasSynthetic);
+        } while (degreeCounter < degree && hasSynthetic);
 
         return SComponentFactory.createProgramWithInstructions("! EXPANDED ! " + name, expandInstructions);
     }

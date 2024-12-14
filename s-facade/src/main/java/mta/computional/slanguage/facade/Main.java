@@ -135,7 +135,7 @@ public class Main {
         executeProgram(program, 7);
 
         System.out.println();
-        SProgram expandedProgram = program.expand();
+        SProgram expandedProgram = program.expand(1);
         System.out.println(expandedProgram.toVerboseString());
         executeProgram(expandedProgram, 7);
         return idProgram;
@@ -147,5 +147,8 @@ public class Main {
         System.out.println("Executing program [" + program.getName() + "] on input: " + input);
         long result = programRunner.run(input);
         System.out.printf("Result (y): %d\n", result);
+
+        System.out.printf("Variable values: %s\n", programRunner.variableState());
+
     }
 }

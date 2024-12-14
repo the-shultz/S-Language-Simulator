@@ -97,7 +97,8 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
             String input = inputs.get(i-1).trim();
             String freeVariable = variablesReplacements.get("x" + i);
             FunctionInputType functionInputType = analyzeInput(input);
-
+            // convert the function inputs to instructions where the free variable will accept the argument such that the function will be able to use it.
+            // here z1 is an example for that free variable.
             SInstruction inputInstruction = switch (functionInputType) {
 
                 // INPUT: z3 --> z1 <- z3
@@ -140,7 +141,7 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
         List<Long> sourceProgramInputs =
                 inputs
                         .stream()
-                        .map(input -> evaluateInput(context, input))
+                        .map(input -> evaluateInput(context, input.trim()))
                         .toList();
 
         SProgramRunner programRunner = SComponentFactory.createProgramRunner(function);

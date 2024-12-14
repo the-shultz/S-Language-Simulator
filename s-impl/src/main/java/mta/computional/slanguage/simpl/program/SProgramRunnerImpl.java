@@ -98,4 +98,9 @@ public class SProgramRunnerImpl implements SProgramRunner {
         // y is the output variable
         return Optional.ofNullable(variables.get("y")).orElse(0L);
     }
+
+    @Override
+    public Map<String, Long> variableState() {
+        return variables;
+    }
 }

@@ -15,7 +15,7 @@ public interface SProgram extends ProgramActions, Serializable {
     long decode();
     String toVerboseString();
     int length();
-    SProgram expand();
+    SProgram expand(int degree);
     SInstruction getInstructionAt(int index);
     SInstruction getFirstInstructionByLabel(Label label);
 
