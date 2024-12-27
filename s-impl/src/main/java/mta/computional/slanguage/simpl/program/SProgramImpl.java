@@ -140,6 +140,11 @@ public class SProgramImpl implements SProgram {
     }
 
     @Override
+    public SProgram expand() {
+        return expand(Integer.MAX_VALUE);
+    }
+
+    @Override
     public SProgram expand(int degree) {
         List<SInstruction> expandInstructions = deepCopyInstructions();
         int degreeCounter = 0;
@@ -182,7 +187,7 @@ public class SProgramImpl implements SProgram {
 
     @Override
     public SProgram duplicate() {
-        return new SProgramImpl(name, instructions);
+        return new SProgramImpl(name, deepCopyInstructions());
     }
 
     @Override

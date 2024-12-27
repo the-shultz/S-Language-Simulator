@@ -135,7 +135,7 @@ public class Main {
         executeProgram(program, 7);
 
         System.out.println();
-        SProgram expandedProgram = program.expand(1);
+        SProgram expandedProgram = program.expand();
         System.out.println(expandedProgram.toVerboseString());
         executeProgram(expandedProgram, 7);
         return idProgram;
