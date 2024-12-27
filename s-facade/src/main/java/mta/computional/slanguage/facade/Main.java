@@ -144,15 +144,21 @@ public class Main {
     }
 
     private static void idAndSuccessor() {
-        SProgram program = SComponentFactory.createEmptyProgram("Synthetic Sugars");
+        SProgram program = SComponentFactory.createEmptyProgram("id & successor");
 
-        SProgram successor = FunctionFactory.createFunction(FunctionFactory.Function.SUCCESSOR);
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
                         .sourceFunctionName(FunctionFactory.Function.SUCCESSOR.name())
-                        .functionsImplementations(Map.of(FunctionFactory.Function.SUCCESSOR.name(), successor))
-                        .sourceFunctionInputs(List.of("x1"))
+                        .functionsImplementations(Map.of(
+                                FunctionFactory.Function.SUCCESSOR.name(), FunctionFactory.createFunction(FunctionFactory.Function.SUCCESSOR),
+                                FunctionFactory.Function.ID.name(), FunctionFactory.createFunction(FunctionFactory.Function.ID))
+                        )
+//                        .sourceFunctionInputs(List.of("x1"))
+//                        .sourceFunctionInputs(List.of("(" + FunctionFactory.Function.SUCCESSOR.name() + ", x1)")) // (SUCCESSOR, x1)
+//                        .sourceFunctionInputs(List.of("(SUCCESSOR,(SUCCESSOR,(SUCCESSOR,(SUCCESSOR,x1))))")) // (SUCCESSOR, (SUCCESSOR,(SUCCESSOR,(SUCCESSOR,(SUCCESSOR,x1)))))
+//                        .sourceFunctionInputs(List.of("(" + FunctionFactory.Function.SUCCESSOR.name() + ",(" + FunctionFactory.Function.ID.name() + ",x1))")) // (SUCCESSOR,(ID,x1))
+                        .sourceFunctionInputs(List.of("(" + FunctionFactory.Function.ID.name() + ",(" + FunctionFactory.Function.SUCCESSOR.name() + ",x1))")) // (ID,(SUCCESSOR,x1))
                         .build())
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));

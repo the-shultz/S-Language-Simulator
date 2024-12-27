@@ -10,13 +10,23 @@ import mta.computional.slanguage.smodel.api.program.ProgramActions;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.*;
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class ApplyFunction extends AbstractSyntheticInstruction {
+
+    private static final String FUNCTION_STRUCTURE_REGEX = "\\((\\b[A-Z]+\\b),((?:[^,()]+|\\((?:[^()]+|\\([^()]*\\))*\\))*)\\)";
+    private static final Pattern FUNCTION_STRUCTURE_PATTERN = Pattern.compile(FUNCTION_STRUCTURE_REGEX);
+    private static final String FUNCTION_ARGUMENTS_REGEX = "([^,()]+|\\((?:[^()]+|\\([^()]*\\))*\\))";
+    private static final Pattern FUNCTION_ARGUMENTS_PATTERN = Pattern.compile(FUNCTION_ARGUMENTS_REGEX);
 
     private enum FunctionInputType {
         VARIABLE,
@@ -111,14 +121,15 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
 
                 // INPUT: (ID, z3) --> z1 <- ID(z3)
                 case FUNCTION -> {
-                    input = input.substring(1, input.length() - 1);
-                    String[] functionCallParts = input.split(",");
+                    List<String> functionParts = parseFunctionStructure(input);
+                    String functionName = functionParts.get(0);
+                    List<String> subFunctionInputs = functionParts.subList(1, functionParts.size());
 
                     yield SComponentFactory.createInstruction(APPLY_FUNCTION, freeVariable, AdditionalArguments.builder().
                             functionCallData(AdditionalArguments.FunctionCallData.builder()
-                                    .sourceFunctionName(functionCallParts[0])
+                                    .sourceFunctionName(functionName)
                                     .functionsImplementations(functions)
-                                    .sourceFunctionInputs(Arrays.stream(functionCallParts).skip(1).toList())
+                                    .sourceFunctionInputs(subFunctionInputs)
                                     .build())
                             .build());
                 }
@@ -163,22 +174,14 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
 
     private long applyFunction(ExecutionContext context, String input) {
 
-        input = input.substring(1, input.length() - 1);
-        String[] functionCallParts = input.split(",");
+        List<String> functionParts = parseFunctionStructure(input);
+        String functionName = functionParts.get(0);
+        List<String> subFunctionInputs = functionParts.subList(1, functionParts.size());
 
-        String functionName = functionCallParts[0];
-
-        List<String> subFunctionInputs = List.of(functionCallParts)
-                .subList(1, functionCallParts.length)
-                .stream()
-                .map(String::trim)
-                .toList();
-
-        SProgram subFunctionProgram = functions.get(functionName);
         AdditionalArguments additionalArguments = AdditionalArguments.builder()
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
                         .sourceFunctionName(functionName)
-                        .functionsImplementations(Map.of(functionName, subFunctionProgram))
+                        .functionsImplementations(functions)
                         .sourceFunctionInputs(subFunctionInputs)
                         .build())
                 .build();
@@ -202,5 +205,25 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
         }
 
         return FunctionInputType.CONSTANT;
+    }
+
+    private List<String> parseFunctionStructure(String source) {
+        Matcher matcher = FUNCTION_STRUCTURE_PATTERN.matcher(source);
+
+        List<String> functionParts = new ArrayList<>();
+        if (matcher.find()) {
+            functionParts.add(matcher.group(1));
+
+            String arguments = matcher.group(2);
+            Matcher argMatcher = FUNCTION_ARGUMENTS_PATTERN.matcher(arguments);
+
+            int argIndex = 1;
+            while (argMatcher.find()) {
+                functionParts.add(argMatcher.group(1).trim());
+                argIndex++;
+            }
+        }
+
+        return functionParts;
     }
 }
