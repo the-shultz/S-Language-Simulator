@@ -3,6 +3,7 @@ package mta.computional.slanguage.facade;
 import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
+import mta.computional.slanguage.simpl.instruction.function.factory.FunctionFactory;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
@@ -18,7 +19,8 @@ public class Main {
     public static void main(String[] args) {
 //        sanityProgram();
 //        id();
-        syntheticSugars();
+//        syntheticSugars();
+        idAndSuccessor();
     }
 
     private static SProgram sanityProgram() {
@@ -139,6 +141,29 @@ public class Main {
         System.out.println(expandedProgram.toVerboseString());
         executeProgram(expandedProgram, 7);
         return idProgram;
+    }
+
+    private static void idAndSuccessor() {
+        SProgram program = SComponentFactory.createEmptyProgram("Synthetic Sugars");
+
+        SProgram successor = FunctionFactory.createFunction(FunctionFactory.Function.SUCCESSOR);
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(FunctionFactory.Function.SUCCESSOR.name())
+                        .functionsImplementations(Map.of(FunctionFactory.Function.SUCCESSOR.name(), successor))
+                        .sourceFunctionInputs(List.of("x1"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+        executeProgram(program, 7);
+
+        System.out.println();
+        SProgram expandedProgram = program.expand(1);
+        System.out.println(expandedProgram.toVerboseString());
+        executeProgram(expandedProgram, 7);
+
     }
 
     private static void executeProgram(SProgram program, long input) {

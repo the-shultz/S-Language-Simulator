@@ -6,7 +6,7 @@ import mta.computional.slanguage.simpl.instruction.basic.impl.Decrease;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Increase;
 import mta.computional.slanguage.simpl.instruction.basic.impl.JumpNoZero;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Neutral;
-import mta.computional.slanguage.simpl.instruction.function.impl.ApplyFunction;
+import mta.computional.slanguage.simpl.instruction.function.ApplyFunction;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.AssignZero;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.Assignment;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.ConstantAssignment;
