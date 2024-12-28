@@ -11,7 +11,7 @@ public enum SFunction {
     PROJECTION {
         @Override
         public String toString() {
-            return "u";
+            return "U";
         }
     },
 }

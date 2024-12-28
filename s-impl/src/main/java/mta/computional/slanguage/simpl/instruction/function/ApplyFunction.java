@@ -50,7 +50,7 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
 
     @Override
     protected String internalToVerboseString() {
-        return variableName + " <- (" + sourceFunctionName + "," + String.join(",", inputs) + ")";
+        return variableName + " <- (" + functions.get(sourceFunctionName).getName() + "," + String.join(",", inputs) + ")";
     }
 
     @Override
