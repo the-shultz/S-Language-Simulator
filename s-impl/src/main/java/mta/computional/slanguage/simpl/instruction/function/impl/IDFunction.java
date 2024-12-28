@@ -3,6 +3,7 @@ package mta.computional.slanguage.simpl.instruction.function.impl;
 import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
+import mta.computional.slanguage.simpl.instruction.function.factory.SFunction;
 import mta.computional.slanguage.simpl.program.SProgramImpl;
 import mta.computional.slanguage.smodel.api.label.Label;
 
@@ -11,7 +12,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 public class IDFunction extends SProgramImpl {
 
     public IDFunction() {
-        super("ID");
+        super(SFunction.ID.toString());
 
         Label L1 = SComponentFactory.createLabel("L1");
         AdditionalArguments arguments = AdditionalArguments.builder().jumpNotZeroLabel(L1).build();

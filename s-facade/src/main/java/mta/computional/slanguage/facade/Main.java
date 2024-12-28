@@ -4,6 +4,7 @@ import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.simpl.instruction.function.factory.FunctionFactory;
+import mta.computional.slanguage.simpl.instruction.function.factory.SFunction;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
@@ -149,16 +150,16 @@ public class Main {
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
-                        .sourceFunctionName(FunctionFactory.Function.SUCCESSOR.name())
+                        .sourceFunctionName(SFunction.SUCCESSOR.toString())
                         .functionsImplementations(Map.of(
-                                FunctionFactory.Function.SUCCESSOR.name(), FunctionFactory.createFunction(FunctionFactory.Function.SUCCESSOR),
-                                FunctionFactory.Function.ID.name(), FunctionFactory.createFunction(FunctionFactory.Function.ID))
+                                SFunction.SUCCESSOR.toString(), FunctionFactory.createFunction(SFunction.SUCCESSOR),
+                                SFunction.ID.toString(), FunctionFactory.createFunction(SFunction.ID))
                         )
 //                        .sourceFunctionInputs(List.of("x1"))
-//                        .sourceFunctionInputs(List.of("(" + FunctionFactory.Function.SUCCESSOR.name() + ", x1)")) // (SUCCESSOR, x1)
+//                        .sourceFunctionInputs(List.of("(" + SFunction.SUCCESSOR.toString() + ", x1)")) // (SUCCESSOR, x1)
 //                        .sourceFunctionInputs(List.of("(SUCCESSOR,(SUCCESSOR,(SUCCESSOR,(SUCCESSOR,x1))))")) // (SUCCESSOR, (SUCCESSOR,(SUCCESSOR,(SUCCESSOR,(SUCCESSOR,x1)))))
-//                        .sourceFunctionInputs(List.of("(" + FunctionFactory.Function.SUCCESSOR.name() + ",(" + FunctionFactory.Function.ID.name() + ",x1))")) // (SUCCESSOR,(ID,x1))
-                        .sourceFunctionInputs(List.of("(" + FunctionFactory.Function.ID.name() + ",(" + FunctionFactory.Function.SUCCESSOR.name() + ",x1))")) // (ID,(SUCCESSOR,x1))
+//                        .sourceFunctionInputs(List.of("(" + SFunction.SUCCESSOR.toString() + ",(" + SFunction.ID.toString() + ",x1))")) // (SUCCESSOR,(ID,x1))
+                        .sourceFunctionInputs(List.of("(" + SFunction.ID.toString() + ",(" + SFunction.SUCCESSOR.toString() + ",x1))")) // (ID,(SUCCESSOR,x1))
                         .build())
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));

@@ -3,13 +3,13 @@ package mta.computional.slanguage.simpl.instruction.function.impl;
 import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
-import mta.computional.slanguage.simpl.instruction.function.factory.FunctionFactory;
+import mta.computional.slanguage.simpl.instruction.function.factory.SFunction;
 import mta.computional.slanguage.simpl.program.SProgramImpl;
 
 public class SuccessorFunction extends SProgramImpl {
 
     public SuccessorFunction() {
-        super(FunctionFactory.Function.SUCCESSOR.name());
+        super(SFunction.SUCCESSOR.toString());
 
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
