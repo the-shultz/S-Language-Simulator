@@ -10,6 +10,8 @@ import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,11 +19,39 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
 public class Main {
 
+    public static final Comparator<Map.Entry<String, Long>> VARIABLES_COMPARATOR = (e1, e2) -> {
+        String k1 = e1.getKey();
+        String k2 = e2.getKey();
+
+        // if y appears - then its always a winner
+        if (k1.equals("y")) {
+            return -1;
+        }
+
+        if (k2.equals("y")) {
+            return 1;
+        }
+
+        if (k1.startsWith("x") && k2.startsWith("x")) {
+            return k1.compareTo(k2);
+        }
+        if (k1.startsWith("x")) {
+            return -1;
+        }
+        if (k2.startsWith("x")) {
+            return 1;
+        }
+
+        // but now they are both not y and not x - so we can compare them (They are Zs)
+        return k1.compareTo(k2);
+    };
+
     public static void main(String[] args) {
 //        sanityProgram();
 //        id();
 //        syntheticSugars();
-        idAndSuccessor();
+//        idAndSuccessor();
+        projection();
     }
 
     private static SProgram sanityProgram() {
@@ -173,14 +203,50 @@ public class Main {
 
     }
 
-    private static void executeProgram(SProgram program, long input) {
+    private static void projection() {
+        SProgram program = SComponentFactory.createEmptyProgram("projection");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.PROJECTION.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.PROJECTION.toString(), FunctionFactory.createProjectionFunction(2))
+                        )
+                        .sourceFunctionInputs(List.of("x1", "x2", "x3"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "z1", additionalArguments));
+        System.out.println(program.toVerboseString());
+        executeProgram(program, 7, 3, 5);
+
+        System.out.println();
+        SProgram expandedProgram = program.expand();
+        System.out.println(expandedProgram.toVerboseString());
+        executeProgram(expandedProgram, 7, 3, 5);
+    }
+
+    private static void executeProgram(SProgram program, long... inputs) {
         SProgramRunner programRunner = SComponentFactory.createProgramRunner(program);
         System.out.println();
-        System.out.println("Executing program [" + program.getName() + "] on input: " + input);
-        long result = programRunner.run(input);
-        System.out.printf("Result (y): %d\n", result);
+        System.out.println("Executing program [" + program.getName() + "] on inputs: " + Arrays.toString(inputs));
 
-        System.out.printf("Variable values: %s\n", programRunner.variableState());
+        programRunner.run(Arrays
+                        .stream(inputs)
+                        .boxed()
+                        .toArray(Long[]::new));
 
+        System.out.println("Variable values:");
+        if (!programRunner.variableState().containsKey("y")) {
+            programRunner.variableState().put("y", 0L);
+        }
+
+        programRunner
+                .variableState()
+                .entrySet()
+                .stream()
+                .sorted(VARIABLES_COMPARATOR)
+                .map(e -> String.format("Variable [%s] = %d", e.getKey(), e.getValue()))
+                .forEach(System.out::println);
     }
 }

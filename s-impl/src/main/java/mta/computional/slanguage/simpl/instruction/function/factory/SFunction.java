@@ -7,5 +7,11 @@ public enum SFunction {
         public String toString() {
             return "S";
         }
-    }
+    },
+    PROJECTION {
+        @Override
+        public String toString() {
+            return "u";
+        }
+    },
 }
