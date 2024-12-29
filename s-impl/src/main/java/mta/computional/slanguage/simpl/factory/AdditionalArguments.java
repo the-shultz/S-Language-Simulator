@@ -13,6 +13,7 @@ import java.util.Map;
 public class AdditionalArguments {
 
     private Label jumpNotZeroLabel;
+    private Label jumpZeroLabel;
     private Label gotoLabel;
     private String assignedVariableName;
     private int constantValue;

@@ -14,6 +14,7 @@ public enum SInstructionRegistry {
     GOTO_LABEL("Go To Label"),
     ASSIGNMENT("Variable Assignment"),
     CONSTANT_ASSIGNMENT("Constant Assignment"),
+    JUMP_ZERO("Jump Zero"),
 
     // FUNCTIONS
     APPLY_FUNCTION("Apply Function");

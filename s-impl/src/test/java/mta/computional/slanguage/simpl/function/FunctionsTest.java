@@ -5,6 +5,7 @@ import mta.computional.slanguage.simpl.factory.SComponentFactory;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
 import mta.computional.slanguage.simpl.instruction.function.factory.FunctionFactory;
 import mta.computional.slanguage.simpl.instruction.function.factory.SFunction;
+import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +47,38 @@ public class FunctionsTest {
         // but now they are both not y and not x - so we can compare them (They are Zs)
         return k1.compareTo(k2);
     };
+
+    @Test
+    @DisplayName("Jump Zero")
+    void jumpZero() {
+
+        SProgram program = SComponentFactory.createEmptyProgram("Jump Zero");
+        Label L1 = SComponentFactory.createLabel("L1");
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .jumpZeroLabel(L1)
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_ZERO, "x1", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.INCREASE, "x1", additionalArguments));
+        System.out.println(program.toVerboseString());
+
+        // x1 = 7
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 7);
+        Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", 8L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 7);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 = 0
+        originalExecutionSnapshot = executeProgram(program, 0);
+        expectedSnapshot = Map.of("y", 0L, "x1", 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = testForExpansion(program, 0);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
 
     @Test
     @DisplayName("const function appliance")
@@ -131,7 +164,7 @@ public class FunctionsTest {
 
     private Map<String, Long> testForExpansion(SProgram program, long... inputs) {
         System.out.println();
-        SProgram expandedProgram = program.expand(1);
+        SProgram expandedProgram = program.expand();
         System.out.println(expandedProgram.toVerboseString());
         return executeProgram(expandedProgram, inputs);
     }

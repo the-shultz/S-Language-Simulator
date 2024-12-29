@@ -7,10 +7,7 @@ import mta.computional.slanguage.simpl.instruction.basic.impl.Increase;
 import mta.computional.slanguage.simpl.instruction.basic.impl.JumpNoZero;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Neutral;
 import mta.computional.slanguage.simpl.instruction.function.ApplyFunction;
-import mta.computional.slanguage.simpl.instruction.synthetic.impl.AssignZero;
-import mta.computional.slanguage.simpl.instruction.synthetic.impl.Assignment;
-import mta.computional.slanguage.simpl.instruction.synthetic.impl.ConstantAssignment;
-import mta.computional.slanguage.simpl.instruction.synthetic.impl.GotoLabel;
+import mta.computional.slanguage.simpl.instruction.synthetic.impl.*;
 import mta.computional.slanguage.simpl.label.LabelImpl;
 import mta.computional.slanguage.simpl.program.SProgramImpl;
 import mta.computional.slanguage.simpl.program.SProgramRunnerImpl;
@@ -41,6 +38,7 @@ public interface SComponentFactory {
             case ASSIGNMENT -> new Assignment(variableName, additionalArguments.getAssignedVariableName());
             case GOTO_LABEL -> new GotoLabel(variableName, additionalArguments.getGotoLabel());
             case CONSTANT_ASSIGNMENT -> new ConstantAssignment(variableName, additionalArguments.getConstantValue());
+            case JUMP_ZERO -> new JumpZero(variableName, additionalArguments.getJumpZeroLabel());
             case APPLY_FUNCTION -> new ApplyFunction(variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
         };
     }
@@ -59,6 +57,7 @@ public interface SComponentFactory {
             case ASSIGNMENT -> new Assignment(instructionLabel, variableName, additionalArguments.getAssignedVariableName());
             case GOTO_LABEL -> new GotoLabel(instructionLabel, variableName, additionalArguments.getGotoLabel());
             case CONSTANT_ASSIGNMENT -> new ConstantAssignment(instructionLabel, variableName, additionalArguments.getConstantValue());
+            case JUMP_ZERO -> new JumpZero(instructionLabel, variableName, additionalArguments.getJumpZeroLabel());
             case APPLY_FUNCTION -> new ApplyFunction(instructionLabel, variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
         };
     }

@@ -163,7 +163,7 @@ public class SProgramImpl implements SProgram {
 
         } while (degreeCounter < degree && hasSynthetic);
 
-        return SComponentFactory.createProgramWithInstructions("! EXPANDED ! " + name, expandInstructions);
+        return SComponentFactory.createProgramWithInstructions("(EXPANDED) " + name, expandInstructions);
     }
 
     @Override
