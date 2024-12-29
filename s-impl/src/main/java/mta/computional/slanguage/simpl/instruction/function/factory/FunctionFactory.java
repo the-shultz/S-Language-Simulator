@@ -1,6 +1,7 @@
 package mta.computional.slanguage.simpl.instruction.function.factory;
 
 
+import mta.computional.slanguage.simpl.instruction.function.impl.ConstFunction;
 import mta.computional.slanguage.simpl.instruction.function.impl.IDFunction;
 import mta.computional.slanguage.simpl.instruction.function.impl.ProjectionFunction;
 import mta.computional.slanguage.simpl.instruction.function.impl.SuccessorFunction;
@@ -18,5 +19,9 @@ public class FunctionFactory {
 
     public static SProgram createProjectionFunction(int projectionIndex) {
         return new ProjectionFunction(projectionIndex);
+    }
+
+    public static SProgram createConstFunction(int constant) {
+        return new ConstFunction(constant);
     }
 }

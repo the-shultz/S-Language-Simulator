@@ -14,4 +14,5 @@ public enum SFunction {
             return "U";
         }
     },
+    CONST
 }

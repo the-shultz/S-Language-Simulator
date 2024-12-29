@@ -51,7 +51,8 @@ public class Main {
 //        id();
 //        syntheticSugars();
 //        idAndSuccessor();
-        projection();
+//        projection();
+        constFunction();
     }
 
     private static SProgram sanityProgram() {
@@ -224,6 +225,30 @@ public class Main {
         SProgram expandedProgram = program.expand();
         System.out.println(expandedProgram.toVerboseString());
         executeProgram(expandedProgram, 7, 3, 5);
+    }
+
+    private static void constFunction() {
+        SProgram program = SComponentFactory.createEmptyProgram("const function");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.CONST.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.CONST.toString(), FunctionFactory.createConstFunction(2))
+                        )
+                        .sourceFunctionInputs(List.of("x1"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "z1", additionalArguments));
+        System.out.println(program.toVerboseString());
+        executeProgram(program, 7);
+
+        System.out.println();
+        SProgram expandedProgram = program.expand();
+        System.out.println(expandedProgram.toVerboseString());
+        executeProgram(expandedProgram, 7, 3, 5);
+
     }
 
     private static void executeProgram(SProgram program, long... inputs) {
