@@ -15,6 +15,7 @@ public enum SInstructionRegistry {
     ASSIGNMENT("Variable Assignment"),
     CONSTANT_ASSIGNMENT("Constant Assignment"),
     JUMP_ZERO("Jump Zero"),
+    JUMP_EQUAL_CONSTANT("Jump Constant"),
 
     // FUNCTIONS
     APPLY_FUNCTION("Apply Function");

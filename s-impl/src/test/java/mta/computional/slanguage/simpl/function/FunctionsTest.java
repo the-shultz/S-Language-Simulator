@@ -81,6 +81,48 @@ public class FunctionsTest {
     }
 
     @Test
+    @DisplayName("Jump Equal Constant")
+    void jumpEqualConstant() {
+
+        final int CONSTANT_VALUE = 1;
+        SProgram program = SComponentFactory.createEmptyProgram("Jump Equal Constant");
+        Label L1 = SComponentFactory.createLabel("L1");
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .jumpConstantLabel(L1)
+                .jumpConstantValue(CONSTANT_VALUE)
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_EQUAL_CONSTANT, "x1", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.INCREASE, "x1", additionalArguments));
+        System.out.println(program.toVerboseString());
+
+        // x1 > CONSTANT_VALUE
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, CONSTANT_VALUE + 1);
+        Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", (long)(CONSTANT_VALUE + 2));
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, CONSTANT_VALUE + 1);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 = CONSTANT_VALUE
+        originalExecutionSnapshot = executeProgram(program, CONSTANT_VALUE);
+        expectedSnapshot = Map.of("y", 0L, "x1", CONSTANT_VALUE + 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = testForExpansion(program, CONSTANT_VALUE);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 < CONSTANT_VALUE
+        originalExecutionSnapshot = executeProgram(program, CONSTANT_VALUE - 1);
+        expectedSnapshot = Map.of("y", 1L, "x1", (long)CONSTANT_VALUE);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = testForExpansion(program, CONSTANT_VALUE - 1);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
     @DisplayName("const function appliance")
     void constFunctionAppliance() {
 
@@ -164,7 +206,7 @@ public class FunctionsTest {
 
     private Map<String, Long> testForExpansion(SProgram program, long... inputs) {
         System.out.println();
-        SProgram expandedProgram = program.expand();
+        SProgram expandedProgram = program.expand(1);
         System.out.println(expandedProgram.toVerboseString());
         return executeProgram(expandedProgram, inputs);
     }

@@ -39,6 +39,7 @@ public interface SComponentFactory {
             case GOTO_LABEL -> new GotoLabel(variableName, additionalArguments.getGotoLabel());
             case CONSTANT_ASSIGNMENT -> new ConstantAssignment(variableName, additionalArguments.getConstantValue());
             case JUMP_ZERO -> new JumpZero(variableName, additionalArguments.getJumpZeroLabel());
+            case JUMP_EQUAL_CONSTANT -> new JumpEqualsConstant(variableName, additionalArguments.getJumpConstantLabel(), additionalArguments.getJumpConstantValue());
             case APPLY_FUNCTION -> new ApplyFunction(variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
         };
     }
@@ -58,6 +59,7 @@ public interface SComponentFactory {
             case GOTO_LABEL -> new GotoLabel(instructionLabel, variableName, additionalArguments.getGotoLabel());
             case CONSTANT_ASSIGNMENT -> new ConstantAssignment(instructionLabel, variableName, additionalArguments.getConstantValue());
             case JUMP_ZERO -> new JumpZero(instructionLabel, variableName, additionalArguments.getJumpZeroLabel());
+            case JUMP_EQUAL_CONSTANT -> new JumpEqualsConstant(instructionLabel, variableName, additionalArguments.getJumpConstantLabel(), additionalArguments.getJumpConstantValue());
             case APPLY_FUNCTION -> new ApplyFunction(instructionLabel, variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
         };
     }

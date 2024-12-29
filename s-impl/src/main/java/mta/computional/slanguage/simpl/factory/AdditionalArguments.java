@@ -17,6 +17,8 @@ public class AdditionalArguments {
     private Label gotoLabel;
     private String assignedVariableName;
     private int constantValue;
+    private int jumpConstantValue;
+    private Label jumpConstantLabel;
     private FunctionCallData functionCallData;
 
     static AdditionalArguments EMPTY = AdditionalArguments.builder().build();
