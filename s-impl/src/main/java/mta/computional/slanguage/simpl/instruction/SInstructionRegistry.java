@@ -17,6 +17,7 @@ public enum SInstructionRegistry {
     JUMP_ZERO("Jump Zero"),
     JUMP_EQUAL_CONSTANT("Jump Constant"),
     JUMP_EQUAL_VARIABLE("Jump Variable Equality"),
+    JUMP_EQUAL_FUNCTION("Jump Function"),
 
     // FUNCTIONS
     APPLY_FUNCTION("Apply Function");

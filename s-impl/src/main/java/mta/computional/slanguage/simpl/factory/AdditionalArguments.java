@@ -21,6 +21,7 @@ public class AdditionalArguments {
     private Label jumpConstantLabel;
     private Label jumpVariableEqualityLabel;
     private String variableEqualityName;
+    private Label jumpFunctionEqualityLabel;
     private FunctionCallData functionCallData;
 
     static AdditionalArguments EMPTY = AdditionalArguments.builder().build();

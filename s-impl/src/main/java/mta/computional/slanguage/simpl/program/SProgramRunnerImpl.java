@@ -36,6 +36,13 @@ public class SProgramRunnerImpl implements SProgramRunner {
     }
 
     @Override
+    public long getAndRemoveVariable(String variableName) {
+        return Optional
+                .ofNullable(variables.remove(variableName))
+                .orElse(0L);
+    }
+
+    @Override
     public ExecutionContext duplicate() {
         return generateDuplicateFrom(variables);
     }
@@ -54,6 +61,13 @@ public class SProgramRunnerImpl implements SProgramRunner {
             public long getVariable(String variableName) {
                 return Optional
                         .ofNullable(variables.get(variableName))
+                        .orElse(0L);
+            }
+
+            @Override
+            public long getAndRemoveVariable(String variableName) {
+                return Optional
+                        .ofNullable(variables.remove(variableName))
                         .orElse(0L);
             }
 

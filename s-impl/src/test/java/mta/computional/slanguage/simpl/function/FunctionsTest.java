@@ -49,7 +49,7 @@ public class FunctionsTest {
     };
 
     @Test
-    @DisplayName("Jump Zero")
+    @DisplayName("Jump Zero: IF X1 = 0 GOTO L1")
     void jumpZero() {
 
         SProgram program = SComponentFactory.createEmptyProgram("Jump Zero");
@@ -81,7 +81,7 @@ public class FunctionsTest {
     }
 
     @Test
-    @DisplayName("Jump Equal Constant")
+    @DisplayName("Jump Equal Constant: IF X1 = 1 GOTO L1")
     void jumpEqualConstant() {
 
         final int CONSTANT_VALUE = 1;
@@ -123,7 +123,7 @@ public class FunctionsTest {
     }
 
     @Test
-    @DisplayName("Jump Variables Equality")
+    @DisplayName("Jump Variables Equality IF X1 = X2 GOTO L1")
     void jumpVariablesEquality() {
 
         SProgram program = SComponentFactory.createEmptyProgram("Jump Variable Equality");
@@ -160,6 +160,52 @@ public class FunctionsTest {
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
         expandedExecutionSnapshot = testForExpansion(program, 2, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
+    @DisplayName("Jump Function Equality: IF X1 = S(X2) GOTO L1")
+    void jumpFunctionEquality() {
+        SProgram program = SComponentFactory.createEmptyProgram("Jump Function Equality");
+        Label L1 = SComponentFactory.createLabel("L1");
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .jumpFunctionEqualityLabel(L1)
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.SUCCESSOR.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.SUCCESSOR.toString(), FunctionFactory.createFunction(SFunction.SUCCESSOR)
+                        ))
+                        .sourceFunctionInputs(List.of("x2"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_EQUAL_FUNCTION, "x1", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.NEUTRAL, "y"));
+        System.out.println(program.toVerboseString());
+
+        // x1 != S(x2)
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3, 1);
+        Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", 3L, "x2", 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 3, 1);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 = S(x2)
+        originalExecutionSnapshot = executeProgram(program, 3, 2);
+        expectedSnapshot = Map.of("y", 0L, "x1", 3L, "x2", 2L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = testForExpansion(program, 3, 2);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 < S(x2)
+        originalExecutionSnapshot = executeProgram(program, 2, 2);
+        expectedSnapshot = Map.of("y", 1L, "x1", 2L, "x2", 2L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = testForExpansion(program, 2, 2);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 

@@ -41,6 +41,7 @@ public interface SComponentFactory {
             case JUMP_ZERO -> new JumpZero(variableName, additionalArguments.getJumpZeroLabel());
             case JUMP_EQUAL_CONSTANT -> new JumpEqualsConstant(variableName, additionalArguments.getJumpConstantLabel(), additionalArguments.getJumpConstantValue());
             case JUMP_EQUAL_VARIABLE -> new JumpVariableEquality(variableName, additionalArguments.getVariableEqualityName(), additionalArguments.getJumpVariableEqualityLabel());
+            case JUMP_EQUAL_FUNCTION -> new JumpFunctionEquality(variableName, additionalArguments.getJumpFunctionEqualityLabel(), additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
             case APPLY_FUNCTION -> new ApplyFunction(variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
         };
     }
@@ -62,6 +63,7 @@ public interface SComponentFactory {
             case JUMP_ZERO -> new JumpZero(instructionLabel, variableName, additionalArguments.getJumpZeroLabel());
             case JUMP_EQUAL_CONSTANT -> new JumpEqualsConstant(instructionLabel, variableName, additionalArguments.getJumpConstantLabel(), additionalArguments.getJumpConstantValue());
             case JUMP_EQUAL_VARIABLE -> new JumpVariableEquality(instructionLabel, variableName, additionalArguments.getVariableEqualityName(), additionalArguments.getJumpVariableEqualityLabel());
+            case JUMP_EQUAL_FUNCTION -> new JumpFunctionEquality(instructionLabel, variableName, additionalArguments.getJumpFunctionEqualityLabel(), additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
             case APPLY_FUNCTION -> new ApplyFunction(instructionLabel, variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
         };
     }
