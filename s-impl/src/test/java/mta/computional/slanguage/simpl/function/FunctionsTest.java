@@ -210,6 +210,53 @@ public class FunctionsTest {
     }
 
     @Test
+    @DisplayName("Jump compound Functions Equality: IF X1 = S(S(ID(X2))) GOTO L1")
+    void jumpCompoundFunctionEquality() {
+        SProgram program = SComponentFactory.createEmptyProgram("Jump Function Equality");
+        Label L1 = SComponentFactory.createLabel("L1");
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .jumpFunctionEqualityLabel(L1)
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.SUCCESSOR.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.SUCCESSOR.toString(), FunctionFactory.createFunction(SFunction.SUCCESSOR),
+                                SFunction.ID.toString(), FunctionFactory.createFunction(SFunction.ID)
+                        ))
+                        .sourceFunctionInputs(List.of("(S,(ID,x2))"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_EQUAL_FUNCTION, "x1", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.NEUTRAL, "y"));
+        System.out.println(program.toVerboseString());
+
+        // x1 != S(x2)
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 4, 1);
+        Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", 4L, "x2", 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 4, 1);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 = S(x2)
+        originalExecutionSnapshot = executeProgram(program, 3, 1);
+        expectedSnapshot = Map.of("y", 0L, "x1", 3L, "x2", 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = testForExpansion(program, 3, 1);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 < S(x2)
+        originalExecutionSnapshot = executeProgram(program, 2, 2);
+        expectedSnapshot = Map.of("y", 1L, "x1", 2L, "x2", 2L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = testForExpansion(program, 2, 2);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
     @DisplayName("const function appliance")
     void constFunctionAppliance() {
 
