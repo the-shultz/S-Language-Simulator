@@ -63,12 +63,14 @@ public class FunctionsTest {
         program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.INCREASE, "x1", additionalArguments));
         System.out.println(program.toVerboseString());
 
+        SProgram expandedProgram = performExpansion(program);
+
         // x1 = 7
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 7);
         Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", 8L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 7);
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 7);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         // x1 = 0
@@ -76,7 +78,7 @@ public class FunctionsTest {
         expectedSnapshot = Map.of("y", 0L, "x1", 1L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        expandedExecutionSnapshot = testForExpansion(program, 0);
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 0);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
@@ -97,12 +99,14 @@ public class FunctionsTest {
         program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.INCREASE, "x1", additionalArguments));
         System.out.println(program.toVerboseString());
 
+        SProgram expandedProgram = performExpansion(program);
+
         // x1 > CONSTANT_VALUE
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, CONSTANT_VALUE + 1);
         Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", (long)(CONSTANT_VALUE + 2));
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, CONSTANT_VALUE + 1);
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, CONSTANT_VALUE + 1);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         // x1 = CONSTANT_VALUE
@@ -110,7 +114,7 @@ public class FunctionsTest {
         expectedSnapshot = Map.of("y", 0L, "x1", CONSTANT_VALUE + 1L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        expandedExecutionSnapshot = testForExpansion(program, CONSTANT_VALUE);
+        expandedExecutionSnapshot = executeProgram(expandedProgram, CONSTANT_VALUE);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         // x1 < CONSTANT_VALUE
@@ -118,7 +122,7 @@ public class FunctionsTest {
         expectedSnapshot = Map.of("y", 1L, "x1", (long)CONSTANT_VALUE);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        expandedExecutionSnapshot = testForExpansion(program, CONSTANT_VALUE - 1);
+        expandedExecutionSnapshot = executeProgram(expandedProgram, CONSTANT_VALUE - 1);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
@@ -138,12 +142,14 @@ public class FunctionsTest {
         program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.NEUTRAL, "y"));
         System.out.println(program.toVerboseString());
 
+        SProgram expandedProgram = performExpansion(program);
+
         // x1 > x2
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3, 2);
         Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", 3L, "x2", 2L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 3, 2);
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 2);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         // x1 = x2
@@ -151,7 +157,7 @@ public class FunctionsTest {
         expectedSnapshot = Map.of("y", 0L, "x1", 3L, "x2", 3L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        expandedExecutionSnapshot = testForExpansion(program, 3, 3);
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 3);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         // x1 < x2
@@ -159,7 +165,7 @@ public class FunctionsTest {
         expectedSnapshot = Map.of("y", 1L, "x1", 2L, "x2", 3L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        expandedExecutionSnapshot = testForExpansion(program, 2, 3);
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 2, 3);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
@@ -184,12 +190,14 @@ public class FunctionsTest {
         program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.NEUTRAL, "y"));
         System.out.println(program.toVerboseString());
 
+        SProgram expandedProgram = performExpansion(program);
+
         // x1 != S(x2)
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3, 1);
         Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", 3L, "x2", 1L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 3, 1);
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 1);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         // x1 = S(x2)
@@ -197,7 +205,7 @@ public class FunctionsTest {
         expectedSnapshot = Map.of("y", 0L, "x1", 3L, "x2", 2L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        expandedExecutionSnapshot = testForExpansion(program, 3, 2);
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 2);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         // x1 < S(x2)
@@ -205,7 +213,7 @@ public class FunctionsTest {
         expectedSnapshot = Map.of("y", 1L, "x1", 2L, "x2", 2L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        expandedExecutionSnapshot = testForExpansion(program, 2, 2);
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 2, 2);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
@@ -231,12 +239,14 @@ public class FunctionsTest {
         program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.NEUTRAL, "y"));
         System.out.println(program.toVerboseString());
 
+        SProgram expandedProgram = performExpansion(program);
+
         // x1 != S(x2)
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 4, 1);
         Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", 4L, "x2", 1L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 4, 1);
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 4, 1);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         // x1 = S(x2)
@@ -244,7 +254,7 @@ public class FunctionsTest {
         expectedSnapshot = Map.of("y", 0L, "x1", 3L, "x2", 1L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        expandedExecutionSnapshot = testForExpansion(program, 3, 1);
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 1);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         // x1 < S(x2)
@@ -252,7 +262,7 @@ public class FunctionsTest {
         expectedSnapshot = Map.of("y", 1L, "x1", 2L, "x2", 2L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        expandedExecutionSnapshot = testForExpansion(program, 2, 2);
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 2, 2);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
@@ -274,11 +284,13 @@ public class FunctionsTest {
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "z1", additionalArguments));
         System.out.println(program.toVerboseString());
 
+        SProgram expandedProgram = performExpansion(program);
+
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 7);
         Map<String, Long> expectedSnapshot = Map.of("y", 0L, "x1", 7L, "z1", 2L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 7, 3, 5);
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 7, 3, 5);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
@@ -300,12 +312,15 @@ public class FunctionsTest {
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "z1", additionalArguments));
         System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program);
+
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 7, 3, 5);
         Map<String, Long> expectedSnapshot = Map.of("y", 0L, "x1", 7L, "x2", 3L, "x3", 5L,"z1", 3L);
 
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 7, 3, 5);
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 7, 3, 5);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
     }
@@ -328,21 +343,22 @@ public class FunctionsTest {
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
         System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program);
+
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 7);
         Map<String, Long> expectedSnapshot = Map.of("y", 8L, "x1", 7L);
-
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 7, 3, 5);
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 7, 3, 5);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
-
     }
 
-    private Map<String, Long> testForExpansion(SProgram program, long... inputs) {
+    private SProgram performExpansion(SProgram program) {
         System.out.println();
         SProgram expandedProgram = program.expand(1);
         System.out.println(expandedProgram.toVerboseString());
-        return executeProgram(expandedProgram, inputs);
+        return expandedProgram;
     }
 
     public static boolean isMapContained(Map<String, Long> contained, Map<String, Long> contains) {
