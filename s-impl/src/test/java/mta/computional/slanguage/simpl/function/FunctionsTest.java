@@ -123,6 +123,47 @@ public class FunctionsTest {
     }
 
     @Test
+    @DisplayName("Jump Variables Equality")
+    void jumpVariablesEquality() {
+
+        SProgram program = SComponentFactory.createEmptyProgram("Jump Variable Equality");
+        Label L1 = SComponentFactory.createLabel("L1");
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .variableEqualityName("x2")
+                .jumpVariableEqualityLabel(L1)
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_EQUAL_VARIABLE, "x1", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.NEUTRAL, "y"));
+        System.out.println(program.toVerboseString());
+
+        // x1 > x2
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3, 2);
+        Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", 3L, "x2", 2L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = testForExpansion(program, 3, 2);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 = x2
+        originalExecutionSnapshot = executeProgram(program, 3, 3);
+        expectedSnapshot = Map.of("y", 0L, "x1", 3L, "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = testForExpansion(program, 3, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 < x2
+        originalExecutionSnapshot = executeProgram(program, 2, 3);
+        expectedSnapshot = Map.of("y", 1L, "x1", 2L, "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = testForExpansion(program, 2, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
     @DisplayName("const function appliance")
     void constFunctionAppliance() {
 
