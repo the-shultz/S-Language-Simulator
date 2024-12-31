@@ -14,5 +14,12 @@ public enum SFunction {
             return "U";
         }
     },
-    CONST
+    CONST,
+    ADD {
+        @Override
+        public String toString() {
+            return "+";
+        }
+    }
+
 }

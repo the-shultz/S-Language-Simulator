@@ -267,7 +267,7 @@ public class FunctionsTest {
     }
 
     @Test
-    @DisplayName("const function appliance")
+    @DisplayName("const function: z1 <- Const2( 7 )")
     void constFunctionAppliance() {
 
         SProgram program = SComponentFactory.createEmptyProgram("const function");
@@ -295,7 +295,7 @@ public class FunctionsTest {
     }
 
     @Test
-    @DisplayName("Projection function appliance")
+    @DisplayName("Projection function: z1 <- U2(7,3,5)")
     void projectionFunctionAppliance() {
 
         SProgram program = SComponentFactory.createEmptyProgram("projection");
@@ -326,10 +326,10 @@ public class FunctionsTest {
     }
 
     @Test
-    @DisplayName("Successor function appliance")
+    @DisplayName("Successor function: y <- S(7)")
     void successorFunctionAppliance() {
 
-        SProgram program = SComponentFactory.createEmptyProgram("id & successor");
+        SProgram program = SComponentFactory.createEmptyProgram("Successor");
 
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
@@ -352,6 +352,35 @@ public class FunctionsTest {
 
         Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 7, 3, 5);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
+    @DisplayName("Add function: y <- ADD(4,6)")
+    void addFunctionYAdd46() {
+        SProgram program = SComponentFactory.createEmptyProgram("Add");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.ADD.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.ADD.toString(), FunctionFactory.createFunction(SFunction.ADD)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 4, 6);
+        Map<String, Long> expectedSnapshot = Map.of("y", 10L, "x1", 4L, "x2", 6L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 4, 6);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
     }
 
     private SProgram performExpansion(SProgram program) {
