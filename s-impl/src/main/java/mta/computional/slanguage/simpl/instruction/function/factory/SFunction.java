@@ -20,6 +20,12 @@ public enum SFunction {
         public String toString() {
             return "+";
         }
-    }
+    },
+    MULTIPLY {
+        @Override
+        public String toString() {
+            return "*";
+        }
+    },
 
 }

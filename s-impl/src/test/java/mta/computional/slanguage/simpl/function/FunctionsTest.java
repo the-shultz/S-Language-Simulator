@@ -380,6 +380,34 @@ public class FunctionsTest {
 
         Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 4, 6);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
+    @DisplayName("Multiply function: y <- MUL(4,6)")
+    void MultiplyFunctionYMul46() {
+        SProgram program = SComponentFactory.createEmptyProgram("Multiply");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.MULTIPLY.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.MULTIPLY.toString(), FunctionFactory.createFunction(SFunction.MULTIPLY)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 4, 6);
+        Map<String, Long> expectedSnapshot = Map.of("y", 24L, "x1", 4L, "x2", 6L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 4, 6);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
     }
 
