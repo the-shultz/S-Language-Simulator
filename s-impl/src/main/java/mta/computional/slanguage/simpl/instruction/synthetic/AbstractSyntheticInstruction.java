@@ -8,6 +8,8 @@ import mta.computional.slanguage.smodel.api.program.ProgramActions;
 
 import java.util.List;
 
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
+
 public abstract class AbstractSyntheticInstruction extends AbstractInstruction {
 
     public AbstractSyntheticInstruction(String variableName) {
@@ -26,6 +28,12 @@ public abstract class AbstractSyntheticInstruction extends AbstractInstruction {
     @Override
     public List<SInstruction> expand(ProgramActions context) {
         List<SInstruction> expandedListOfInstructions = internalExpand(context);
+
+        // if this instruction has a label on it - then it should appear on the first instruction of the expanded list (currently this instruction has no label on it)
+        if (hasLabel()) {
+            expandedListOfInstructions.get(0).replaceLabel(EMPTY, getLabel());
+        }
+
         expandedListOfInstructions.forEach(i -> i.setDerivedFrom(this));
         return expandedListOfInstructions;
     }

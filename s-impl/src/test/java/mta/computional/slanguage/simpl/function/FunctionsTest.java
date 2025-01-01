@@ -355,6 +355,41 @@ public class FunctionsTest {
     }
 
     @Test
+    @DisplayName("expansion with label (using successor applied several times)")
+    void expansionWithLabelUsingSuccessor() {
+
+        SProgram program = SComponentFactory.createEmptyProgram("Successor");
+        Label L1 = SComponentFactory.createLabel("L1");
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .assignedVariableName("x1")
+                .jumpNotZeroLabel(L1)
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.SUCCESSOR.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.SUCCESSOR.toString(), FunctionFactory.createFunction(SFunction.SUCCESSOR)
+                        ))
+                        .sourceFunctionInputs(List.of("z1"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, "z1", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(L1, SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, "z1", AdditionalArguments.builder().assignedVariableName("y").build()));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.DECREASE, "x2"));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, "x2", additionalArguments));
+        System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 7, 3);
+        Map<String, Long> expectedSnapshot = Map.of("y", 10L, "x1", 7L, "x2", 0L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 7, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
     @DisplayName("Add function: y <- ADD(4,6)")
     void addFunctionYAdd46() {
         SProgram program = SComponentFactory.createEmptyProgram("Add");
