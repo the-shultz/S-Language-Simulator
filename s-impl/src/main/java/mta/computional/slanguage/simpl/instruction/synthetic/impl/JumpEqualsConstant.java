@@ -17,7 +17,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class JumpEqualsConstant extends AbstractSyntheticInstruction {
 
-    private final Label jumpLabel;
+    private Label jumpLabel;
     private final int constantValue;
 
     public JumpEqualsConstant(String variableName, Label jumpLabel, int constantValue) {
@@ -56,6 +56,14 @@ public class JumpEqualsConstant extends AbstractSyntheticInstruction {
         expandedInstructions.add(SComponentFactory.createInstructionWithLabel(A, SInstructionRegistry.NEUTRAL, "y"));
 
         return expandedInstructions;
+    }
+
+    @Override
+    public void replaceLabel(Label oldLabel, Label newLabel) {
+        super.replaceLabel(oldLabel, newLabel);
+        if (jumpLabel.equals(oldLabel)) {
+            jumpLabel = newLabel;
+        }
     }
 
     @Override

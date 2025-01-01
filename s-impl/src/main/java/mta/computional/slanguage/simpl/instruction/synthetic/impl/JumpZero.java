@@ -16,7 +16,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class JumpZero extends AbstractSyntheticInstruction {
 
-    private final Label jumpLabel;
+    private Label jumpLabel;
 
     public JumpZero(String variableName, Label jumpLabel) {
         this(EMPTY, variableName, jumpLabel);
@@ -43,6 +43,14 @@ public class JumpZero extends AbstractSyntheticInstruction {
                 SComponentFactory.createInstruction(SInstructionRegistry.GOTO_LABEL, variableName, additionalArguments),
                 SComponentFactory.createInstructionWithLabel(A, SInstructionRegistry.NEUTRAL, "y")
         );
+    }
+
+    @Override
+    public void replaceLabel(Label oldLabel, Label newLabel) {
+        super.replaceLabel(oldLabel, newLabel);
+        if (jumpLabel.equals(oldLabel)) {
+            jumpLabel = newLabel;
+        }
     }
 
     @Override

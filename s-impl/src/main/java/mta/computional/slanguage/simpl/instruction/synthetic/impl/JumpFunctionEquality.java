@@ -19,7 +19,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
 public class JumpFunctionEquality extends AbstractSyntheticInstruction {
 
-    private final Label jumpLabel;
+    private Label jumpLabel;
     private final String sourceFunctionName;
     private final Map<String, SProgram> functions;
     private final List<String> inputs;
@@ -55,6 +55,14 @@ public class JumpFunctionEquality extends AbstractSyntheticInstruction {
                 SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, z1, additionalArguments),
                 SComponentFactory.createInstruction(SInstructionRegistry.JUMP_EQUAL_VARIABLE, variableName, additionalArguments)
         );
+    }
+
+    @Override
+    public void replaceLabel(Label oldLabel, Label newLabel) {
+        super.replaceLabel(oldLabel, newLabel);
+        if (jumpLabel.equals(oldLabel)) {
+            jumpLabel = newLabel;
+        }
     }
 
     @Override
