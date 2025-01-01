@@ -23,6 +23,7 @@ public class AdditionalArguments {
     private String variableEqualityName;
     private Label jumpFunctionEqualityLabel;
     private FunctionCallData functionCallData;
+    private RecursiveData recursiveData;
 
     static AdditionalArguments EMPTY = AdditionalArguments.builder().build();
 
@@ -32,5 +33,13 @@ public class AdditionalArguments {
         private String sourceFunctionName;
         private Map<String, SProgram> functionsImplementations;
         private List<String> sourceFunctionInputs;
+    }
+
+    @Builder
+    @Getter
+    public static class RecursiveData {
+        private SProgram breakingCondition;
+        private SProgram stepFunction;
+        private List<String> nativeInputs;
     }
 }

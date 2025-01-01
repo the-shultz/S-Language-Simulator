@@ -19,8 +19,9 @@ public enum SInstructionRegistry {
     JUMP_EQUAL_VARIABLE("Jump Variable Equality"),
     JUMP_EQUAL_FUNCTION("Jump Function"),
 
-    // FUNCTIONS
-    APPLY_FUNCTION("Apply Function");
+    // MECHANISM
+    APPLY_FUNCTION("Apply Function"),
+    RECURSION("Recursion");
 
     private final String name;
 

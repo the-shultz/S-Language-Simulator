@@ -16,6 +16,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.MULTIPLY;
+import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.SUCCESSOR;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -178,9 +180,9 @@ public class FunctionsTest {
                 .builder()
                 .jumpFunctionEqualityLabel(L1)
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
-                        .sourceFunctionName(SFunction.SUCCESSOR.toString())
+                        .sourceFunctionName(SUCCESSOR.toString())
                         .functionsImplementations(Map.of(
-                                SFunction.SUCCESSOR.toString(), FunctionFactory.createFunction(SFunction.SUCCESSOR)
+                                SUCCESSOR.toString(), FunctionFactory.createFunction(SUCCESSOR)
                         ))
                         .sourceFunctionInputs(List.of("x2"))
                         .build())
@@ -226,9 +228,9 @@ public class FunctionsTest {
                 .builder()
                 .jumpFunctionEqualityLabel(L1)
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
-                        .sourceFunctionName(SFunction.SUCCESSOR.toString())
+                        .sourceFunctionName(SUCCESSOR.toString())
                         .functionsImplementations(Map.of(
-                                SFunction.SUCCESSOR.toString(), FunctionFactory.createFunction(SFunction.SUCCESSOR),
+                                SUCCESSOR.toString(), FunctionFactory.createFunction(SUCCESSOR),
                                 SFunction.ID.toString(), FunctionFactory.createFunction(SFunction.ID)
                         ))
                         .sourceFunctionInputs(List.of("(S,(ID,x2))"))
@@ -334,9 +336,9 @@ public class FunctionsTest {
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
-                        .sourceFunctionName(SFunction.SUCCESSOR.toString())
+                        .sourceFunctionName(SUCCESSOR.toString())
                         .functionsImplementations(Map.of(
-                                SFunction.SUCCESSOR.toString(), FunctionFactory.createFunction(SFunction.SUCCESSOR)
+                                SUCCESSOR.toString(), FunctionFactory.createFunction(SUCCESSOR)
                         ))
                         .sourceFunctionInputs(List.of("x1"))
                         .build())
@@ -365,11 +367,12 @@ public class FunctionsTest {
                 .assignedVariableName("x1")
                 .jumpNotZeroLabel(L1)
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
-                        .sourceFunctionName(SFunction.SUCCESSOR.toString())
+                        .sourceFunctionName(SUCCESSOR.toString())
                         .functionsImplementations(Map.of(
-                                SFunction.SUCCESSOR.toString(), FunctionFactory.createFunction(SFunction.SUCCESSOR)
+                                SUCCESSOR.toString(), FunctionFactory.createFunction(SUCCESSOR)
                         ))
                         .sourceFunctionInputs(List.of("z1"))
+//                        .sourceFunctionInputs(List.of("(S,z1)"))
                         .build())
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, "z1", additionalArguments));
@@ -470,9 +473,9 @@ public class FunctionsTest {
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
-                        .sourceFunctionName(SFunction.MULTIPLY.toString())
+                        .sourceFunctionName(MULTIPLY.toString())
                         .functionsImplementations(Map.of(
-                                SFunction.MULTIPLY.toString(), FunctionFactory.createFunction(SFunction.MULTIPLY)
+                                MULTIPLY.toString(), FunctionFactory.createFunction(MULTIPLY)
                         ))
                         .sourceFunctionInputs(List.of("x1","x2"))
                         .build())
@@ -489,6 +492,71 @@ public class FunctionsTest {
         Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 4, 6);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
+    }
+
+    @Test
+    @DisplayName("Recursion: f(x) = 2x")
+    void recursionFX2X() {
+        SProgram twoxStepFunction = SComponentFactory.createEmptyProgram("s s x");
+        twoxStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "x2"));
+        twoxStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "x2"));
+        twoxStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, "y", AdditionalArguments.builder().assignedVariableName("x2").build()));
+
+        SProgram program = SComponentFactory.createEmptyProgram("Recursion f(x) = 2x");
+
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .recursiveData(AdditionalArguments.RecursiveData.builder()
+                        .breakingCondition(FunctionFactory.createConstFunction(0))
+                        .stepFunction(twoxStepFunction)
+                        .nativeInputs(List.of("x1"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.RECURSION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3);
+        Map<String, Long> expectedSnapshot = Map.of("y", 6L, "x1", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+    }
+
+    @Test
+    @DisplayName("Recursion: f(x) = x!")
+    void recursionFactorial() {
+        SProgram factorialStepFunction = SComponentFactory.createEmptyProgram("(t, t!) -> (t+1)*t!");
+        AdditionalArguments stepFunctionAdditionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData
+                        .builder()
+                        .sourceFunctionName(MULTIPLY.toString())
+                        .functionsImplementations(Map.of(
+                                MULTIPLY.toString(), FunctionFactory.createFunction(MULTIPLY),
+                                SUCCESSOR.toString(), FunctionFactory.createFunction(SUCCESSOR)
+                        ))
+                        .sourceFunctionInputs(List.of("(S,x1)","x2"))
+                        .build())
+                .build();
+        factorialStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", stepFunctionAdditionalArguments));
+
+        SProgram program = SComponentFactory.createEmptyProgram("Recursion f(x) = x!");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .recursiveData(AdditionalArguments.RecursiveData.builder()
+                        .breakingCondition(FunctionFactory.createConstFunction(1))
+                        .stepFunction(factorialStepFunction)
+                        .nativeInputs(List.of("x1"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.RECURSION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 4);
+        Map<String, Long> expectedSnapshot = Map.of("y", 24L, "x1", 4L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
     }
 
     private SProgram performExpansion(SProgram program) {
