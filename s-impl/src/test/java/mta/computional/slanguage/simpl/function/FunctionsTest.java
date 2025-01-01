@@ -383,6 +383,51 @@ public class FunctionsTest {
     }
 
     @Test
+    @DisplayName("Minus function: y <- Minus(6,4)")
+    void minusFunctionYMinus64() {
+        SProgram program = SComponentFactory.createEmptyProgram("Minus");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.MINUS.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.MINUS.toString(), FunctionFactory.createFunction(SFunction.MINUS)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program);
+
+        // x1 > x2
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 6, 4);
+        Map<String, Long> expectedSnapshot = Map.of("y", 2L, "x1", 6L, "x2", 4L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 6, 4);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 > x2 (== 0)
+        originalExecutionSnapshot = executeProgram(program, 4, 6);
+        expectedSnapshot = Map.of("y", 0L, "x1", 4L, "x2", 6L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 4, 6);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        // x1 = x2 (== 0)
+        originalExecutionSnapshot = executeProgram(program, 4, 4);
+        expectedSnapshot = Map.of("y", 0L, "x1", 4L, "x2", 4L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 4, 4);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
     @DisplayName("Multiply function: y <- MUL(4,6)")
     void MultiplyFunctionYMul46() {
         SProgram program = SComponentFactory.createEmptyProgram("Multiply");

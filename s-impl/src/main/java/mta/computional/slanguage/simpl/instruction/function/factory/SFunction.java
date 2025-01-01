@@ -27,5 +27,11 @@ public enum SFunction {
             return "*";
         }
     },
+    MINUS {
+        @Override
+        public String toString() {
+            return "-";
+        }
+    },
 
 }

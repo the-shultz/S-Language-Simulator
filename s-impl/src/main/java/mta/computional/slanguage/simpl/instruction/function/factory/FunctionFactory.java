@@ -11,6 +11,7 @@ public class FunctionFactory {
             case ID -> new IDFunction();
             case SUCCESSOR -> new SuccessorFunction();
             case ADD -> new AddFunction();
+            case MINUS -> new MinusFunction();
             case MULTIPLY -> new MultiplyFunction();
             default -> throw new IllegalStateException("Unexpected value: " + functionName);
         };
