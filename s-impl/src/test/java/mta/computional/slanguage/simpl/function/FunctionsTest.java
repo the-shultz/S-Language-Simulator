@@ -371,8 +371,8 @@ public class FunctionsTest {
                         .functionsImplementations(Map.of(
                                 SUCCESSOR.toString(), FunctionFactory.createFunction(SUCCESSOR)
                         ))
-                        .sourceFunctionInputs(List.of("z1"))
-//                        .sourceFunctionInputs(List.of("(S,z1)"))
+//                        .sourceFunctionInputs(List.of("z1"))
+                        .sourceFunctionInputs(List.of("(S,z1)"))
                         .build())
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, "z1", additionalArguments));
@@ -385,7 +385,7 @@ public class FunctionsTest {
         SProgram expandedProgram = performExpansion(program);
 
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 7, 3);
-        Map<String, Long> expectedSnapshot = Map.of("y", 10L, "x1", 7L, "x2", 0L);
+        Map<String, Long> expectedSnapshot = Map.of("y", 13L, "x1", 7L, "x2", 0L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
         Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 7, 3);

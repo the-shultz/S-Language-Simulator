@@ -25,6 +25,7 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
     private static final Pattern FUNCTION_STRUCTURE_PATTERN = Pattern.compile(FUNCTION_STRUCTURE_REGEX);
     private static final String FUNCTION_ARGUMENTS_REGEX = "([^,()]+|\\((?:[^()]+|\\([^()]*\\))*\\))";
     private static final Pattern FUNCTION_ARGUMENTS_PATTERN = Pattern.compile(FUNCTION_ARGUMENTS_REGEX);
+    public static final String INPUTS_DELIMETER = "<>";
 
     private enum FunctionInputType {
         VARIABLE,
@@ -33,7 +34,7 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
     }
     private final String sourceFunctionName;
     private final Map<String, SProgram> functions;
-    private final List<String> inputs;
+    private List<String> inputs;
 
     public ApplyFunction(String variableName, String sourceFunctionName, Map<String, SProgram> functions, List<String> inputs) {
         this(EMPTY, variableName, sourceFunctionName, functions, inputs);
@@ -156,9 +157,10 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
     @Override
     public void replaceVariable(String oldVariable, String newVariable) {
         super.replaceVariable(oldVariable, newVariable);
-        if (inputs.contains(oldVariable)) {
-            inputs.set(inputs.indexOf(oldVariable), newVariable);
-        }
+
+        String concatenatedInputs = String.join(INPUTS_DELIMETER, inputs);
+        concatenatedInputs = concatenatedInputs.replace(oldVariable, newVariable);
+        inputs = List.of(concatenatedInputs.split(INPUTS_DELIMETER));
     }
 
     @Override
