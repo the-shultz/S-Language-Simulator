@@ -50,7 +50,7 @@ public class SProgramImpl implements SProgram {
         nextWorkingVariableId = 0;
         workingVariables = instructions
                 .stream()
-                .flatMap(s -> s.getVariables().stream())
+                .flatMap(s -> s.getVariables().stream().filter(v -> !v.isEmpty()))
                 .collect(Collectors.toSet());
     }
 
@@ -71,7 +71,12 @@ public class SProgramImpl implements SProgram {
         instruction.setNextInstructionInOrder(STOP);
 
         labels.add(instruction.getLabel());
-        workingVariables.addAll(instruction.getVariables());
+        workingVariables.addAll(
+                instruction
+                        .getVariables()
+                        .stream()
+                        .filter(v -> !v.isEmpty()) // ignore empty variables that might appear in some instructions that are not based on variables
+                        .collect(Collectors.toSet()));
     }
 
     @Override
