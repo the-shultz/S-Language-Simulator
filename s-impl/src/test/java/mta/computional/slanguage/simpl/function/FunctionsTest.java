@@ -466,6 +466,55 @@ public class FunctionsTest {
     }
 
     @Test
+    @DisplayName("complex program with multiple functions")
+    void complexProgramWithMultipleFunctions() {
+
+        SProgram program = SComponentFactory.createEmptyProgram("multiple");
+
+        AdditionalArguments addArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.ADD.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.ADD.toString(), FunctionFactory.createFunction(SFunction.ADD)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+
+        AdditionalArguments minusArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.MINUS.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.MINUS.toString(), FunctionFactory.createFunction(SFunction.MINUS)
+                        ))
+                        .sourceFunctionInputs(List.of("y","x2"))
+                        .build())
+                .build();
+        //program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "x1"));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", addArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y"));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", minusArguments));
+        System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program);
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 4, 6);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 5L,
+                "x1", 4L,
+                "x2", 6L);
+//        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 0, 0);
+//        Map<String, Long> expectedSnapshot = Map.of("y", 1L, "x1", 0L, "x2", 0L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 4, 6);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+//        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 0);
+//        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
     @DisplayName("Multiply function: y <- MUL(4,6)")
     void MultiplyFunctionYMul46() {
         SProgram program = SComponentFactory.createEmptyProgram("Multiply");
@@ -553,6 +602,7 @@ public class FunctionsTest {
 
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.RECURSION, "y", additionalArguments));
         System.out.println(program.toVerboseString());
+        SProgram expandedProgram = performExpansion(program);
 
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 4);
         Map<String, Long> expectedSnapshot = Map.of("y", 24L, "x1", 4L);

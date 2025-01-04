@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.*;
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
 public class ApplyFunction extends AbstractSyntheticInstruction {
 
@@ -41,7 +42,7 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
     public ApplyFunction(Label label, String variableName, String sourceFunctionName, Map<String, SProgram> functions, List<String> inputs) {
         super(label, variableName);
         this.functions = functions;
-        this.inputs = inputs;
+        this.inputs = new ArrayList<>(inputs); // to ensure the list is mutable
         this.sourceFunctionName = sourceFunctionName;
     }
 
@@ -79,9 +80,9 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
         sourceProgram
                 .getUsedVariables()
                 // add only variables that weren't added beforehand as part of the input traversal (x1..xn) as program might not use all of its inputs
-                .forEach(variable -> variablesReplacements.putIfAbsent(variable, context.createFreeWorkingVariable()));
+                .forEach(variable -> variablesReplacements.computeIfAbsent(variable, v -> context.createFreeWorkingVariable()));
 
-        variablesReplacements.put("y", variableName);
+        variablesReplacements.put("y", context.createFreeWorkingVariable());
 
         // change source program variables (input & y) to the list of free variables.
         sourceProgram.replaceVariable(variablesReplacements);
@@ -102,9 +103,6 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
         sourceProgram.replaceLabels(labelsReplacements);
 
         List<SInstruction> expansion = new ArrayList<>();
-
-        // add an instruction to zero the variable name
-        expansion.add(SComponentFactory.createInstruction(ZERO_VARIABLE, variableName));
 
         // expand the source inputs (get a list of instructions derived from the source inputs) use the synthetic sugar for that v <- v'
         for (int i = 1; i <= inputs.size(); i++) {
@@ -144,7 +142,23 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
 
         // add the list of instructions of the source (now altered) program
         expansion.addAll(sourceProgram.getInstructions());
+
+        Label endLabel = context.createAvailableLabel();
+        expansion.add(SComponentFactory.createInstructionWithLabel(endLabel, ASSIGNMENT, variableName, AdditionalArguments.builder().assignedVariableName(variablesReplacements.get("y")).build()));
+
+        // in case there is an instruction that had a ... GOTO E inside it, as part of the expansion it should be replaced with GOTO endLabel that stands on the last expanded instruction
+        // (and if that's the last instruction that it will be interpreted as end of program)
+        expansion.forEach(instruction -> instruction.replaceLabel(EXIT, endLabel));
         return expansion;
+    }
+
+    // in case of a variable replacement, replace the variable in the applied function's inputs
+    @Override
+    public void replaceVariable(String oldVariable, String newVariable) {
+        super.replaceVariable(oldVariable, newVariable);
+        if (inputs.contains(oldVariable)) {
+            inputs.set(inputs.indexOf(oldVariable), newVariable);
+        }
     }
 
     @Override
