@@ -10,10 +10,7 @@ import mta.computional.slanguage.smodel.api.program.ProgramActions;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 import mta.computional.slanguage.smodel.api.program.SProgramRunner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -90,11 +87,18 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
         sourceProgram.replaceVariable(variablesReplacements);
 
         // collect and replace labels in the source program
+        Set<Label> sourceLabels = sourceProgram.getUsedLabels();
         Map<Label, Label> labelsReplacements =
-            sourceProgram
-                    .getUsedLabels()
+            sourceLabels
                     .stream()
-                    .collect(Collectors.toMap(l -> l, sourceLabel -> context.createAvailableLabel()));
+                    .collect(Collectors.toMap(l -> l, sourceLabel -> {
+                        // find a perfectly new label to replace existing one. it has to be one that is not used in the source program.
+                        Label availableLabel;
+                        do {
+                            availableLabel = context.createAvailableLabel();
+                        } while ( sourceLabels.contains(availableLabel));
+                        return availableLabel;
+                    }));
         sourceProgram.replaceLabels(labelsReplacements);
 
         List<SInstruction> expansion = new ArrayList<>();
