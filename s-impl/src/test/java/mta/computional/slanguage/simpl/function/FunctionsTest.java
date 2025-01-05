@@ -646,6 +646,64 @@ public class FunctionsTest {
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
+    @Test
+    @DisplayName("Recursion: f(x,y) = x^y")
+    void recursionPow() {
+
+        SProgram breakingConditionFunction = SComponentFactory.createEmptyProgram("CONST-1");
+        AdditionalArguments breakingConditionArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData
+                        .builder()
+                        .sourceFunctionName(CONST.toString())
+                        .functionsImplementations(Map.of(
+                                CONST.toString(), FunctionFactory.createConstFunction(1)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+        breakingConditionFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", breakingConditionArguments));
+
+        SProgram powStepFunction = SComponentFactory.createEmptyProgram("g:[(t, x^y, y, x) -> (x^y) * x]");
+        AdditionalArguments stepFunctionAdditionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData
+                        .builder()
+                        .sourceFunctionName(MULTIPLY.toString())
+                        .functionsImplementations(Map.of(
+                                MULTIPLY.toString(), FunctionFactory.createFunction(MULTIPLY)
+                        ))
+                        .sourceFunctionInputs(List.of("x2","x4"))
+                        .build())
+                .build();
+        powStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", stepFunctionAdditionalArguments));
+
+        SProgram program = SComponentFactory.createEmptyProgram("Recursion f(x,y) = x^y");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .recursiveData(AdditionalArguments.RecursiveData.builder()
+                        .breakingCondition(breakingConditionFunction)
+                        .stepFunction(powStepFunction)
+                        .nativeInputs(List.of("x2","x1"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.RECURSION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+        SProgram expandedProgram = performExpansion(program);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 2, 3);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 8L,
+                "x1", 2L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 2, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
     private SProgram performExpansion(SProgram program) {
         System.out.println();
         SProgram expandedProgram = program.expand(1);

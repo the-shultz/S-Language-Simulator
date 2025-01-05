@@ -46,18 +46,20 @@ public class Recursion extends AbstractSyntheticInstruction {
         Label L1 = context.createAvailableLabel();
         Label FINISH_EXPANSION_LABEL = context.createAvailableLabel();
 
+        String originalRecursiveArgumentName = inputs.get(0);
+
         // apply base case:
         List<SInstruction> result = new ArrayList<>(breakingCondition.getInstructions());
 
-        result.add(SComponentFactory.createInstruction(JUMP_ZERO, "x1", AdditionalArguments.builder().jumpZeroLabel(FINISH_EXPANSION_LABEL).build()));
-        result.add(SComponentFactory.createInstruction(ASSIGNMENT, RECURSIVE_ARGUMENT, AdditionalArguments.builder().assignedVariableName("x1").build()));
+        result.add(SComponentFactory.createInstruction(JUMP_ZERO, originalRecursiveArgumentName, AdditionalArguments.builder().jumpZeroLabel(FINISH_EXPANSION_LABEL).build()));
+        result.add(SComponentFactory.createInstruction(ASSIGNMENT, RECURSIVE_ARGUMENT, AdditionalArguments.builder().assignedVariableName(originalRecursiveArgumentName).build()));
 
         // apply recursive case:
         List<String> newInputs = new ArrayList<>();
         newInputs.add(Z1);
         newInputs.add("y");
         newInputs.addAll(inputs);
-        newInputs.replaceAll(input -> input.equals("x1") ? RECURSIVE_ARGUMENT : input);
+        newInputs.replaceAll(input -> input.equals(originalRecursiveArgumentName) ? RECURSIVE_ARGUMENT : input);
 
         SInstruction stepApplyFunction = SComponentFactory.createInstruction(APPLY_FUNCTION, "y", AdditionalArguments.builder().functionCallData(AdditionalArguments.FunctionCallData.builder()
                 .sourceFunctionName(stepFunction.getName())
