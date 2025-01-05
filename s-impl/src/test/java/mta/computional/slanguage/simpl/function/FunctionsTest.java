@@ -16,8 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.MULTIPLY;
-import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.SUCCESSOR;
+import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -546,18 +545,33 @@ public class FunctionsTest {
     @Test
     @DisplayName("Recursion: f(x) = 2x")
     void recursionFX2X() {
-        SProgram twoxStepFunction = SComponentFactory.createEmptyProgram("s s x");
+
+        SProgram breakingConditionFunction = SComponentFactory.createEmptyProgram("CONST-0");
+        AdditionalArguments breakingConditionArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData
+                        .builder()
+                        .sourceFunctionName(CONST.toString())
+                        .functionsImplementations(Map.of(
+                                CONST.toString(), FunctionFactory.createConstFunction(0)
+                        ))
+                        .sourceFunctionInputs(List.of("x1"))
+                        .build())
+                .build();
+        breakingConditionFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", breakingConditionArguments));
+
+
+        SProgram twoxStepFunction = SComponentFactory.createEmptyProgram("(S,(S,X))");
         twoxStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "x2"));
         twoxStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "x2"));
         twoxStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, "y", AdditionalArguments.builder().assignedVariableName("x2").build()));
 
         SProgram program = SComponentFactory.createEmptyProgram("Recursion f(x) = 2x");
 
-
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
                 .recursiveData(AdditionalArguments.RecursiveData.builder()
-                        .breakingCondition(FunctionFactory.createConstFunction(0))
+                        .breakingCondition(breakingConditionFunction)
                         .stepFunction(twoxStepFunction)
                         .nativeInputs(List.of("x1"))
                         .build())
@@ -566,14 +580,34 @@ public class FunctionsTest {
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.RECURSION, "y", additionalArguments));
         System.out.println(program.toVerboseString());
 
+        SProgram expandedProgram = performExpansion(program);
+
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3);
         Map<String, Long> expectedSnapshot = Map.of("y", 6L, "x1", 3L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
     @Test
     @DisplayName("Recursion: f(x) = x!")
     void recursionFactorial() {
+
+        SProgram breakingConditionFunction = SComponentFactory.createEmptyProgram("CONST-1");
+        AdditionalArguments breakingConditionArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData
+                        .builder()
+                        .sourceFunctionName(CONST.toString())
+                        .functionsImplementations(Map.of(
+                                CONST.toString(), FunctionFactory.createConstFunction(1)
+                        ))
+                        .sourceFunctionInputs(List.of("x1"))
+                        .build())
+                .build();
+        breakingConditionFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", breakingConditionArguments));
+
         SProgram factorialStepFunction = SComponentFactory.createEmptyProgram("(t, t!) -> (t+1)*t!");
         AdditionalArguments stepFunctionAdditionalArguments = AdditionalArguments
                 .builder()
@@ -594,7 +628,7 @@ public class FunctionsTest {
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
                 .recursiveData(AdditionalArguments.RecursiveData.builder()
-                        .breakingCondition(FunctionFactory.createConstFunction(1))
+                        .breakingCondition(breakingConditionFunction)
                         .stepFunction(factorialStepFunction)
                         .nativeInputs(List.of("x1"))
                         .build())
@@ -607,6 +641,9 @@ public class FunctionsTest {
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 4);
         Map<String, Long> expectedSnapshot = Map.of("y", 24L, "x1", 4L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 4);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
     private SProgram performExpansion(SProgram program) {

@@ -1,5 +1,6 @@
 package mta.computional.slanguage.simpl.instruction.synthetic.mechanism.recursion;
 
+import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
 import mta.computional.slanguage.simpl.instruction.synthetic.AbstractSyntheticInstruction;
 import mta.computional.slanguage.simpl.instruction.synthetic.mechanism.FunctionStructureUtil;
@@ -14,8 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.RECURSION;
+import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.*;
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
 public class Recursion extends AbstractSyntheticInstruction {
 
@@ -38,12 +40,47 @@ public class Recursion extends AbstractSyntheticInstruction {
 
     @Override
     protected List<SInstruction> internalExpand(ProgramActions context) {
-        return List.of();
+
+        String Z1 = context.createFreeWorkingVariable();
+        String RECURSIVE_ARGUMENT = context.createFreeWorkingVariable();
+        Label L1 = context.createAvailableLabel();
+        Label FINISH_EXPANSION_LABEL = context.createAvailableLabel();
+
+        // apply base case:
+        List<SInstruction> result = new ArrayList<>(breakingCondition.getInstructions());
+
+        result.add(SComponentFactory.createInstruction(JUMP_ZERO, "x1", AdditionalArguments.builder().jumpZeroLabel(FINISH_EXPANSION_LABEL).build()));
+        result.add(SComponentFactory.createInstruction(ASSIGNMENT, RECURSIVE_ARGUMENT, AdditionalArguments.builder().assignedVariableName("x1").build()));
+
+        // apply recursive case:
+        List<String> newInputs = new ArrayList<>();
+        newInputs.add(Z1);
+        newInputs.add("y");
+        newInputs.addAll(inputs);
+        newInputs.replaceAll(input -> input.equals("x1") ? RECURSIVE_ARGUMENT : input);
+
+        SInstruction stepApplyFunction = SComponentFactory.createInstruction(APPLY_FUNCTION, "y", AdditionalArguments.builder().functionCallData(AdditionalArguments.FunctionCallData.builder()
+                .sourceFunctionName(stepFunction.getName())
+                .functionsImplementations(Map.of(stepFunction.getName(), stepFunction))
+                .sourceFunctionInputs(newInputs)
+                .build()).build());
+        List<SInstruction> stepFunctionExpansion = stepApplyFunction.expand(context);
+
+        stepFunctionExpansion.get(0).replaceLabel(EMPTY, L1);
+
+        result.addAll(stepFunctionExpansion);
+
+        result.add(SComponentFactory.createInstruction(INCREASE, Z1));
+        result.add(SComponentFactory.createInstruction(DECREASE, RECURSIVE_ARGUMENT));
+        result.add(SComponentFactory.createInstruction(JUMP_NOT_ZERO, RECURSIVE_ARGUMENT, AdditionalArguments.builder().jumpNotZeroLabel(L1).build()));
+        result.add(SComponentFactory.createInstructionWithLabel(FINISH_EXPANSION_LABEL, NEUTRAL, "y"));
+
+        return result;
     }
 
     @Override
     protected String internalToVerboseString() {
-        return variableName + " <- Recursive(" + ")";
+        return variableName + " <- Recursive(" + breakingCondition.getName() + "," + stepFunction.getName() + "," + String.join(",", inputs) + ")";
     }
 
     @Override
