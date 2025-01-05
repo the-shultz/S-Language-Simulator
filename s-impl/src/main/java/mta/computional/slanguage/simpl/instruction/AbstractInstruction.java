@@ -4,6 +4,7 @@ import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
 
 import java.util.List;
+import java.util.Optional;
 
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
@@ -41,11 +42,21 @@ public abstract class AbstractInstruction implements SInstruction {
 
     @Override
     public String toVerboseString() {
-        String verboseString = String.format("[ %2s ] %s", getLabel().toVerboseString(), internalToVerboseString());
-        if (deriveFromInstruction != null) {
-            verboseString += "      << " + deriveFromInstruction.toVerboseString();
-        }
-        return verboseString;
+        return
+            Optional
+                    .ofNullable(deriveFromInstruction)
+                    .map(d -> String.format("[ %-3s] %-25s << %-25s",
+                            getLabel().toVerboseString(),
+                            internalToVerboseString(),
+                            d.toVerboseString()))
+                    .orElseGet(() -> String.format("[ %-3s] %-25s",
+                            getLabel().toVerboseString(),
+                            internalToVerboseString()));
+    }
+
+    @Override
+    public String toString() {
+        return toVerboseString();
     }
 
     abstract protected String internalToVerboseString();
