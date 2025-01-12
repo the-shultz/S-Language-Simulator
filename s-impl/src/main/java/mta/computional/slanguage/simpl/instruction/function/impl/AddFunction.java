@@ -22,9 +22,9 @@ public class AddFunction extends SProgramImpl {
         String z2 = createFreeWorkingVariable();
         String z3 = createFreeWorkingVariable();
 
+        addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, "y"));
         addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z1, AdditionalArguments.builder().assignedVariableName("x1").build()));
         addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z2, AdditionalArguments.builder().assignedVariableName("x2").build()));
-        //addInstruction(SComponentFactory.createInstructionWithLabel(C, SInstructionRegistry.ZERO_VARIABLE, "y"));
         addInstruction(SComponentFactory.createInstructionWithLabel(C, SInstructionRegistry.JUMP_NOT_ZERO, z1, AdditionalArguments.builder().jumpNotZeroLabel(A).build()));
         addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, z2, AdditionalArguments.builder().jumpNotZeroLabel(B).build()));
         addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, z3));

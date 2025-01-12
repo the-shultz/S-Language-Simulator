@@ -18,7 +18,6 @@ import java.util.Map;
 
 import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FunctionsTest {
 
@@ -568,14 +567,36 @@ public class FunctionsTest {
                 .build();
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
         System.out.println(program.toVerboseString());
-        performExpansion(program,1);
-        SProgram expandedProgram = performExpansion(program,2);
+        SProgram expandedProgram = performExpansion(program);
 
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 4, 6);
-        Map<String, Long> expectedSnapshot = Map.of("y", 24L, "x1", 4L, "x2", 6L);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 24L,
+                "x1", 4L,
+                "x2", 6L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
         Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 4, 6);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 0, 6);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 0L,
+                "x2", 6L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 6);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program,  6, 0);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 6L,
+                "x2", 0L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 6, 0);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
     }
