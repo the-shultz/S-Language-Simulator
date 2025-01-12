@@ -81,6 +81,9 @@ public abstract class AbstractInstruction implements SInstruction {
         if (variableName.equals(oldVariable)) {
             variableName = newVariable;
         }
+//        else {
+//            System.out.println("Suspicious Replace Variable: Variable " + oldVariable + " not found in instruction " + this.toVerboseString() + " wanted to switch to " + newVariable);
+//        }
     }
 
     @Override
@@ -88,6 +91,9 @@ public abstract class AbstractInstruction implements SInstruction {
         if (label.equals(oldLabel)) {
             label = newLabel;
         }
+//        else {
+//            System.out.println("Suspicious Replace Label: Label " + oldLabel + " not found in instruction " + this.toVerboseString() + " wanted to switch to " + newLabel);
+//        }
     }
 
     @Override

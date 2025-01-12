@@ -39,8 +39,8 @@ public class JumpVariableEquality extends AbstractSyntheticInstruction {
         String z2 = context.createFreeWorkingVariable();
 
         return List.of(
-                SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z1, AdditionalArguments.builder().assignedVariableName("x1").build()),
-                SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z2, AdditionalArguments.builder().assignedVariableName("x2").build()),
+                SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z1, AdditionalArguments.builder().assignedVariableName(variableName).build()),
+                SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z2, AdditionalArguments.builder().assignedVariableName(secondVariableName).build()),
                 SComponentFactory.createInstructionWithLabel(B, SInstructionRegistry.JUMP_ZERO, z1, AdditionalArguments.builder().jumpZeroLabel(C).build()),
                 SComponentFactory.createInstruction(SInstructionRegistry.JUMP_ZERO, z2, AdditionalArguments.builder().jumpZeroLabel(A).build()),
                 SComponentFactory.createInstruction(SInstructionRegistry.DECREASE, z1),

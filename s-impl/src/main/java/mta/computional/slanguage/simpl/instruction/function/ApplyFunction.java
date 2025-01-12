@@ -78,10 +78,17 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
         for (int i = 1; i <= inputs.size(); i++) {
             variablesReplacements.put("x" + i, context.createFreeWorkingVariable());
         }
-        sourceProgram
-                .getUsedVariables()
+        Set<String> usedVariables = sourceProgram.getUsedVariables();
+        usedVariables
                 // add only variables that weren't added beforehand as part of the input traversal (x1..xn) as program might not use all of its inputs
-                .forEach(variable -> variablesReplacements.computeIfAbsent(variable, v -> context.createFreeWorkingVariable()));
+                // the variables must not be in used by the source program
+                .forEach(variable -> variablesReplacements.computeIfAbsent(variable, v -> {
+                    String freeWorkingVariable = context.createFreeWorkingVariable();
+                    while (usedVariables.contains(freeWorkingVariable)) {
+                        freeWorkingVariable = context.createFreeWorkingVariable();
+                    }
+                    return freeWorkingVariable;
+                }));
 
         variablesReplacements.put("y", context.createFreeWorkingVariable());
 
