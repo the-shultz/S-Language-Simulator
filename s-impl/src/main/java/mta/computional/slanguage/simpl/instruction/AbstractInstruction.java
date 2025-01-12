@@ -45,11 +45,13 @@ public abstract class AbstractInstruction implements SInstruction {
         return
             Optional
                     .ofNullable(deriveFromInstruction)
-                    .map(d -> String.format("[ %-3s] %-25s << %-25s",
+                    .map(d -> String.format("(%s) [ %-3s] %-25s << %-25s",
+                            isSynthetic() ? "S" : "B",
                             getLabel().toVerboseString(),
                             internalToVerboseString(),
                             d.toVerboseString()))
-                    .orElseGet(() -> String.format("[ %-3s] %-25s",
+                    .orElseGet(() -> String.format("(%s) [ %-3s] %-25s",
+                            isSynthetic() ? "S" : "B",
                             getLabel().toVerboseString(),
                             internalToVerboseString()));
     }
