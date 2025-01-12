@@ -47,7 +47,7 @@ public class FunctionsTest {
         // but now they are both not y and not x - so we can compare them (They are Zs)
         return k1.compareTo(k2);
     };
-    private final static int EXPANSION_DEGREE = 2;
+    private final static int EXPANSION_DEGREE = 15;
 
     @Test
     @DisplayName("Jump Zero: IF X1 = 0 GOTO L1")

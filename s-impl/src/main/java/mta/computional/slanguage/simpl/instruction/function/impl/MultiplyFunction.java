@@ -36,6 +36,7 @@ public class MultiplyFunction extends SProgramImpl {
                         .build())
                 .build();
 
+        addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, "y"));
         addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z2, additionalArguments));
         addInstruction(SComponentFactory.createInstructionWithLabel(A, SInstructionRegistry.JUMP_ZERO, z2, additionalArguments));
         addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
