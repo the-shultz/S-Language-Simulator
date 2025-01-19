@@ -632,7 +632,8 @@ public class FunctionsTest {
                 .recursiveData(AdditionalArguments.RecursiveData.builder()
                         .breakingCondition(breakingConditionFunction)
                         .stepFunction(twoxStepFunction)
-                        .nativeInputs(List.of("x1"))
+                        .recursiveArgument("x1")
+                        .nativeInputs(List.of())
                         .build())
                 .build();
 
@@ -689,7 +690,8 @@ public class FunctionsTest {
                 .recursiveData(AdditionalArguments.RecursiveData.builder()
                         .breakingCondition(breakingConditionFunction)
                         .stepFunction(factorialStepFunction)
-                        .nativeInputs(List.of("x1"))
+                        .recursiveArgument("x1")
+                        .nativeInputs(List.of())
                         .build())
                 .build();
 
@@ -744,7 +746,8 @@ public class FunctionsTest {
                 .recursiveData(AdditionalArguments.RecursiveData.builder()
                         .breakingCondition(breakingConditionFunction)
                         .stepFunction(powStepFunction)
-                        .nativeInputs(List.of("x2","x1"))
+                        .recursiveArgument("x2")
+                        .nativeInputs(List.of("x1"))
                         .build())
                 .build();
 
@@ -760,6 +763,65 @@ public class FunctionsTest {
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
         Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 2, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
+    @DisplayName("Recursion: f(x,y) = x-y")
+    void recursionMinus() {
+
+        SProgram breakingConditionFunction = SComponentFactory.createEmptyProgram("U-2");
+        AdditionalArguments breakingConditionArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData
+                        .builder()
+                        .sourceFunctionName(PROJECTION.toString())
+                        .functionsImplementations(Map.of(
+                                PROJECTION.toString(), FunctionFactory.createProjectionFunction(2)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+        breakingConditionFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", breakingConditionArguments));
+
+        SProgram minusStepFunction = SComponentFactory.createEmptyProgram("g:[(t, x-y, y, x) -> (x-y) - 1]");
+        AdditionalArguments stepFunctionAdditionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData
+                        .builder()
+                        .sourceFunctionName(MINUS.toString())
+                        .functionsImplementations(Map.of(
+                                MINUS.toString(), FunctionFactory.createFunction(MINUS)
+                        ))
+                        .sourceFunctionInputs(List.of("x2","1"))
+                        .build())
+                .build();
+        minusStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", stepFunctionAdditionalArguments));
+
+        SProgram program = SComponentFactory.createEmptyProgram("Recursion f(x,y) = x-y");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .recursiveData(AdditionalArguments.RecursiveData.builder()
+                        .breakingCondition(breakingConditionFunction)
+                        .stepFunction(minusStepFunction)
+                        .recursiveArgument("x2")
+                        .nativeInputs(List.of("x1"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.RECURSION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+        SProgram expandedProgram = performExpansion(program, 1);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 5, 3);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 2L,
+                "x1", 5L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 5, 3);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 

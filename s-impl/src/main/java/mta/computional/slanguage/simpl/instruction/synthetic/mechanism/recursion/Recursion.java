@@ -24,17 +24,18 @@ public class Recursion extends AbstractSyntheticInstruction {
     private final SProgram breakingCondition;
     private final SProgram stepFunction;
 
-    // invariant: first input is the recursion variable
+    private final String recursiveArgument;
     private final List<String> inputs;
 
-    public Recursion(String variableName, SProgram breakingCondition, SProgram stepFunction, List<String> inputs) {
-        this(EMPTY, variableName, breakingCondition, stepFunction, inputs);
+    public Recursion(String variableName, SProgram breakingCondition, SProgram stepFunction, List<String> inputs, String recursiveArgument) {
+        this(EMPTY, variableName, breakingCondition, stepFunction, inputs, recursiveArgument);
     }
 
-    public Recursion(Label label, String variableName, SProgram breakingCondition, SProgram stepFunction, List<String> inputs) {
+    public Recursion(Label label, String variableName, SProgram breakingCondition, SProgram stepFunction, List<String> inputs, String recursiveArgument) {
         super(label, variableName);
         this.breakingCondition = breakingCondition;
         this.stepFunction = stepFunction;
+        this.recursiveArgument = recursiveArgument;
         this.inputs = inputs;
     }
 
@@ -46,20 +47,18 @@ public class Recursion extends AbstractSyntheticInstruction {
         Label L1 = context.createAvailableLabel();
         Label FINISH_EXPANSION_LABEL = context.createAvailableLabel();
 
-        String originalRecursiveArgumentName = inputs.get(0);
-
         // apply base case:
         List<SInstruction> result = new ArrayList<>(breakingCondition.getInstructions());
 
-        result.add(SComponentFactory.createInstruction(JUMP_ZERO, originalRecursiveArgumentName, AdditionalArguments.builder().jumpZeroLabel(FINISH_EXPANSION_LABEL).build()));
-        result.add(SComponentFactory.createInstruction(ASSIGNMENT, RECURSIVE_ARGUMENT, AdditionalArguments.builder().assignedVariableName(originalRecursiveArgumentName).build()));
+        result.add(SComponentFactory.createInstruction(JUMP_ZERO, recursiveArgument, AdditionalArguments.builder().jumpZeroLabel(FINISH_EXPANSION_LABEL).build()));
+        result.add(SComponentFactory.createInstruction(ASSIGNMENT, RECURSIVE_ARGUMENT, AdditionalArguments.builder().assignedVariableName(recursiveArgument).build()));
 
         // apply recursive case:
         List<String> newInputs = new ArrayList<>();
         newInputs.add(Z1);
         newInputs.add("y");
+        newInputs.add(RECURSIVE_ARGUMENT);
         newInputs.addAll(inputs);
-        newInputs.replaceAll(input -> input.equals(originalRecursiveArgumentName) ? RECURSIVE_ARGUMENT : input);
 
         SInstruction stepApplyFunction = SComponentFactory.createInstruction(APPLY_FUNCTION, "y", AdditionalArguments.builder().functionCallData(AdditionalArguments.FunctionCallData.builder()
                 .sourceFunctionName(stepFunction.getName())
@@ -98,9 +97,12 @@ public class Recursion extends AbstractSyntheticInstruction {
     @Override
     public Label execute(ExecutionContext context) {
 
-        long currentResult = runProgram(breakingCondition, inputs, context);
+        List<String> baseCaseInputs = new ArrayList<>();
+        baseCaseInputs.add(recursiveArgument);
+        baseCaseInputs.addAll(inputs);
+        long currentResult = runProgram(breakingCondition, baseCaseInputs, context);
 
-        long recursionDepth = context.getVariable(inputs.get(0)); // first input is the recursion variable
+        long recursionDepth = context.getVariable(recursiveArgument); // first input is the recursion variable
         int iterationNumber = 0;
 
         // next step loop. currentResult & iterationNumber are of the last performed iteration
@@ -111,6 +113,7 @@ public class Recursion extends AbstractSyntheticInstruction {
             List<String> newInputs = new ArrayList<>();
             newInputs.add(String.valueOf(iterationNumber));
             newInputs.add(String.valueOf(currentResult));
+            newInputs.add(recursiveArgument);
             newInputs.addAll(inputs);
 
             currentResult = runProgram(stepFunction, newInputs, context);

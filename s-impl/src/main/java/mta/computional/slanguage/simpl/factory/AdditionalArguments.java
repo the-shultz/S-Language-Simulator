@@ -40,6 +40,7 @@ public class AdditionalArguments {
     public static class RecursiveData {
         private SProgram breakingCondition;
         private SProgram stepFunction;
+        private String recursiveArgument;
         private List<String> nativeInputs;
     }
 }
