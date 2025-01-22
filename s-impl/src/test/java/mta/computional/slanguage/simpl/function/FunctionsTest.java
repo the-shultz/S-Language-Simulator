@@ -830,6 +830,46 @@ public class FunctionsTest {
 
         Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 5, 3);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 5);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 3L,
+                "x2", 5L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 5);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 3);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 3L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 0);
+        expectedSnapshot = Map.of(
+                "y", 3L,
+                "x1", 3L,
+                "x2", 0L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 0);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 0, 0);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 0L,
+                "x2", 0L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 0);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
     private SProgram performExpansion(SProgram program) {
