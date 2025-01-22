@@ -620,7 +620,7 @@ public class FunctionsTest {
         breakingConditionFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", breakingConditionArguments));
 
 
-        SProgram twoxStepFunction = SComponentFactory.createEmptyProgram("(S,(S,X))");
+        SProgram twoxStepFunction = SComponentFactory.createEmptyProgram("g:[x+2]");
         twoxStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "x2"));
         twoxStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "x2"));
         twoxStepFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, "y", AdditionalArguments.builder().assignedVariableName("x2").build()));
@@ -668,7 +668,7 @@ public class FunctionsTest {
                 .build();
         breakingConditionFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", breakingConditionArguments));
 
-        SProgram factorialStepFunction = SComponentFactory.createEmptyProgram("(t, t!) -> (t+1)*t!");
+        SProgram factorialStepFunction = SComponentFactory.createEmptyProgram("g:[(t+1) * t!]");
         AdditionalArguments stepFunctionAdditionalArguments = AdditionalArguments
                 .builder()
                 .functionCallData(AdditionalArguments.FunctionCallData
@@ -725,7 +725,7 @@ public class FunctionsTest {
                 .build();
         breakingConditionFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", breakingConditionArguments));
 
-        SProgram powStepFunction = SComponentFactory.createEmptyProgram("g:[(t, x^y, y, x) -> (x^y) * x]");
+        SProgram powStepFunction = SComponentFactory.createEmptyProgram("g:[(x^y) * x]");
         AdditionalArguments stepFunctionAdditionalArguments = AdditionalArguments
                 .builder()
                 .functionCallData(AdditionalArguments.FunctionCallData
@@ -770,21 +770,21 @@ public class FunctionsTest {
     @DisplayName("Recursion: f(x,y) = x-y")
     void recursionMinus() {
 
-        SProgram breakingConditionFunction = SComponentFactory.createEmptyProgram("U-2");
+            SProgram breakingConditionFunction = SComponentFactory.createEmptyProgram("U-2");
         AdditionalArguments breakingConditionArguments = AdditionalArguments
                 .builder()
                 .functionCallData(AdditionalArguments.FunctionCallData
                         .builder()
                         .sourceFunctionName(PROJECTION.toString())
                         .functionsImplementations(Map.of(
-                                PROJECTION.toString(), FunctionFactory.createProjectionFunction(2)
-                        ))
+                                    PROJECTION.toString(), FunctionFactory.createProjectionFunction(2)
+                        ))                         // x1 here is the recursive variable (y); x2 is the constant from which we start the descent (x)
                         .sourceFunctionInputs(List.of("x1","x2"))
                         .build())
                 .build();
         breakingConditionFunction.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", breakingConditionArguments));
 
-        SProgram minusStepFunction = SComponentFactory.createEmptyProgram("g:[(t, x-y, y, x) -> (x-y) - 1]");
+        SProgram minusStepFunction = SComponentFactory.createEmptyProgram("g:[(x-y) - 1]");
         AdditionalArguments stepFunctionAdditionalArguments = AdditionalArguments
                 .builder()
                 .functionCallData(AdditionalArguments.FunctionCallData
@@ -812,7 +812,7 @@ public class FunctionsTest {
 
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.RECURSION, "y", additionalArguments));
         System.out.println(program.toVerboseString());
-        SProgram expandedProgram = performExpansion(program, 1);
+        SProgram expandedProgram = performExpansion(program);
 
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 5, 3);
         Map<String, Long> expectedSnapshot = Map.of(
