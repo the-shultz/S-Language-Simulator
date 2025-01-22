@@ -25,7 +25,7 @@ public class FunctionsTest {
         String k1 = e1.getKey();
         String k2 = e2.getKey();
 
-        // if y appears - then its always a winner
+        // if y appears - then it's always a winner
         if (k1.equals("y")) {
             return -1;
         }
@@ -35,7 +35,7 @@ public class FunctionsTest {
         }
 
         if (k1.startsWith("x") && k2.startsWith("x")) {
-            return k1.compareTo(k2);
+            return compareByVariablesIndex(k1, k2);
         }
         if (k1.startsWith("x")) {
             return -1;
@@ -44,9 +44,16 @@ public class FunctionsTest {
             return 1;
         }
 
-        // but now they are both not y and not x - so we can compare them (They are Zs)
-        return k1.compareTo(k2);
+        // by now they are both not y and not x - so we can compare them (They are Zs)
+        return compareByVariablesIndex(k1, k2);
     };
+
+    private static int compareByVariablesIndex(String first, String second) {
+        int firstIndex = Integer.parseInt(first.trim().substring(1));
+        int secondIndex = Integer.parseInt(second.trim().substring(1));
+        return firstIndex - secondIndex;
+    }
+
     private final static int EXPANSION_DEGREE = 15;
 
     @Test
