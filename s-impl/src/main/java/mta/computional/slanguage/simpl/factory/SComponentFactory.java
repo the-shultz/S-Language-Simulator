@@ -6,7 +6,7 @@ import mta.computional.slanguage.simpl.instruction.basic.impl.Decrease;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Increase;
 import mta.computional.slanguage.simpl.instruction.basic.impl.JumpNoZero;
 import mta.computional.slanguage.simpl.instruction.basic.impl.Neutral;
-import mta.computional.slanguage.simpl.instruction.function.ApplyFunction;
+import mta.computional.slanguage.simpl.instruction.synthetic.mechanism.invocation.ApplyFunction;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.*;
 import mta.computional.slanguage.simpl.instruction.synthetic.mechanism.recursion.Recursion;
 import mta.computional.slanguage.simpl.label.LabelImpl;

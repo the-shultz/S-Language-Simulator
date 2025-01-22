@@ -2,7 +2,6 @@ package mta.computional.slanguage.simpl.instruction.synthetic.mechanism;
 
 import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
-import mta.computional.slanguage.simpl.instruction.function.ApplyFunction;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.program.ExecutionContext;
 import mta.computional.slanguage.smodel.api.program.SProgram;

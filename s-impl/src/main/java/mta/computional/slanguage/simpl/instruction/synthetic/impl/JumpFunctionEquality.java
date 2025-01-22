@@ -3,7 +3,7 @@ package mta.computional.slanguage.simpl.instruction.synthetic.impl;
 import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
 import mta.computional.slanguage.simpl.instruction.SInstructionRegistry;
-import mta.computional.slanguage.simpl.instruction.function.ApplyFunction;
+import mta.computional.slanguage.simpl.instruction.synthetic.mechanism.invocation.ApplyFunction;
 import mta.computional.slanguage.simpl.instruction.synthetic.AbstractSyntheticInstruction;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;

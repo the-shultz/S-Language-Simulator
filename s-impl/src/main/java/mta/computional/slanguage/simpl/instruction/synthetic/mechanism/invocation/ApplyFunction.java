@@ -1,4 +1,4 @@
-package mta.computional.slanguage.simpl.instruction.function;
+package mta.computional.slanguage.simpl.instruction.synthetic.mechanism.invocation;
 
 import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
