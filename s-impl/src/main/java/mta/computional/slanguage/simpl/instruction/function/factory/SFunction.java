@@ -33,5 +33,11 @@ public enum SFunction {
             return "-";
         }
     },
+    NOT {
+        @Override
+        public String toString() {
+            return "!";
+        }
+    }
 
 }

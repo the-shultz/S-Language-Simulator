@@ -13,6 +13,7 @@ public class FunctionFactory {
             case ADD -> new AddFunction();
             case MINUS -> new MinusFunction();
             case MULTIPLY -> new MultiplyFunction();
+            case NOT -> new NotFunction();
             default -> throw new IllegalStateException("Unexpected value: " + functionName);
         };
     }
