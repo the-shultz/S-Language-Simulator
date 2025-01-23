@@ -1,7 +1,9 @@
 package mta.computional.slanguage.simpl.instruction.function.factory;
 
 
+import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.instruction.function.impl.*;
+import mta.computional.slanguage.simpl.instruction.function.impl.predicate.AndFunction;
 import mta.computional.slanguage.simpl.instruction.function.impl.predicate.NotFunction;
 import mta.computional.slanguage.simpl.instruction.function.impl.predicate.SmallerEqualThanFunction;
 import mta.computional.slanguage.smodel.api.program.SProgram;
@@ -27,5 +29,9 @@ public class FunctionFactory {
 
     public static SProgram createConstFunction(int constant) {
         return new ConstFunction(constant);
+    }
+
+    public static SProgram createAndFunction(AdditionalArguments.FunctionCallData leftPredicate, AdditionalArguments.FunctionCallData rightPredicate) {
+        return new AndFunction(leftPredicate, rightPredicate);
     }
 }

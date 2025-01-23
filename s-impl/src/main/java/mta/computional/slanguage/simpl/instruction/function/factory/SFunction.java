@@ -45,5 +45,11 @@ public enum SFunction {
             return "<=";
         }
     },
+    AND {
+        @Override
+        public String toString() {
+            return "&&";
+        }
+    },
 
 }

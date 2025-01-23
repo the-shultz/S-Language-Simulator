@@ -5,12 +5,13 @@ import lombok.Getter;
 import mta.computional.slanguage.smodel.api.label.Label;
 import mta.computional.slanguage.smodel.api.program.SProgram;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 @Builder
 @Getter
-public class AdditionalArguments {
+public class AdditionalArguments implements Serializable {
 
     private Label jumpNotZeroLabel;
     private Label jumpZeroLabel;
@@ -29,7 +30,7 @@ public class AdditionalArguments {
 
     @Builder
     @Getter
-    public static class FunctionCallData {
+    public static class FunctionCallData implements Serializable {
         private String sourceFunctionName;
         private Map<String, SProgram> functionsImplementations;
         private List<String> sourceFunctionInputs;
@@ -37,7 +38,7 @@ public class AdditionalArguments {
 
     @Builder
     @Getter
-    public static class RecursiveData {
+    public static class RecursiveData implements Serializable{
         private SProgram breakingCondition;
         private SProgram stepFunction;
         private String recursiveArgument;
