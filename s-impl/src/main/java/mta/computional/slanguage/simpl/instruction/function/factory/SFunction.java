@@ -38,6 +38,12 @@ public enum SFunction {
         public String toString() {
             return "!";
         }
-    }
+    },
+    SMALLER_EQUAL_THAN {
+        @Override
+        public String toString() {
+            return "<=";
+        }
+    },
 
 }

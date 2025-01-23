@@ -874,10 +874,10 @@ public class FunctionsTest {
     }
 
     @Test
-    @DisplayName("predicates")
-    void predicates() {
+    @DisplayName("Predicate Alpha (NOT)")
+    void predicateAlpha() {
 
-        SProgram program = SComponentFactory.createEmptyProgram("Predicates");
+        SProgram program = SComponentFactory.createEmptyProgram("Alpha (NOT)");
 
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
@@ -911,7 +911,58 @@ public class FunctionsTest {
 
         expandedExecutionSnapshot = executeProgram(expandedProgram, 0);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
 
+    @Test
+    @DisplayName("Predicate SMALLER EQUAL THAN (<=)")
+    void predicateSmallerEqualThan() {
+
+        SProgram program = SComponentFactory.createEmptyProgram("<=");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SMALLER_EQUAL_THAN.toString())
+                        .functionsImplementations(Map.of(
+                                SMALLER_EQUAL_THAN.toString(), FunctionFactory.createFunction(SMALLER_EQUAL_THAN)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+        SProgram expandedProgram = performExpansion(program);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 2, 3);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 1L,
+                "x1", 2L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 2, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 2);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 3L,
+                "x2", 2L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 2);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 3);
+        expectedSnapshot = Map.of(
+                "y", 1L,
+                "x1", 3L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
     private SProgram performExpansion(SProgram program) {

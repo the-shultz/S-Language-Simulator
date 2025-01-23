@@ -1,4 +1,4 @@
-package mta.computional.slanguage.simpl.instruction.function.impl;
+package mta.computional.slanguage.simpl.instruction.function.impl.predicate;
 
 import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
