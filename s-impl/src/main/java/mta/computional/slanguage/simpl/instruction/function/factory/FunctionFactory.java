@@ -20,6 +20,7 @@ public class FunctionFactory {
             case AND -> new AndFunction();
             case EQUALITY -> new EqualityFunction();
             case SMALLER_EQUAL_THAN -> new SmallerEqualThanFunction();
+            case SMALLER_THAN -> new SmallerThanFunction();
             default -> throw new IllegalStateException("Unexpected value: " + functionName);
         };
     }

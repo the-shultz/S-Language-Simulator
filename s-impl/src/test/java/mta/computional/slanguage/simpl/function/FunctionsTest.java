@@ -966,6 +966,58 @@ public class FunctionsTest {
     }
 
     @Test
+    @DisplayName("Predicate SMALLER THAN (<)")
+    void predicateSmallerThan() {
+
+        SProgram program = SComponentFactory.createEmptyProgram("<");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SMALLER_THAN.toString())
+                        .functionsImplementations(Map.of(
+                                SMALLER_THAN.toString(), FunctionFactory.createFunction(SMALLER_THAN)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+        SProgram expandedProgram = performExpansion(program);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 2, 3);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 1L,
+                "x1", 2L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 2, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 2);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 3L,
+                "x2", 2L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 2);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 3);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 3L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
     @DisplayName("Predicate AND")
     void predicateAnd() {
         // should return true when x1==0 && x2==0
@@ -1108,7 +1160,7 @@ public class FunctionsTest {
 
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
         System.out.println(program.toVerboseString());
-        SProgram expandedProgram = performExpansion(program, 1);
+        SProgram expandedProgram = performExpansion(program);
 
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 0, 0);
         Map<String, Long> expectedSnapshot = Map.of(

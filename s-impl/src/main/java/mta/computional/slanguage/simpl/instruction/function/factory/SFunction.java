@@ -45,6 +45,12 @@ public enum SFunction {
             return "<=";
         }
     },
+    SMALLER_THAN {
+        @Override
+        public String toString() {
+            return "<";
+        }
+    },
     AND {
         @Override
         public String toString() {
