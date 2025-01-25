@@ -16,6 +16,7 @@ public class FunctionFactory {
             case MINUS -> new MinusFunction();
             case MULTIPLY -> new MultiplyFunction();
             case DIV -> new DivFunction();
+            case REMAINDER -> new RemainingFunction();
             case NOT -> new NotFunction();
             case OR -> new OrFunction();
             case AND -> new AndFunction();

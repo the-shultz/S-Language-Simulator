@@ -39,6 +39,12 @@ public enum SFunction {
             return "/";
         }
     },
+    REMAINDER {
+        @Override
+        public String toString() {
+            return "%";
+        }
+    },
     NOT {
         @Override
         public String toString() {
