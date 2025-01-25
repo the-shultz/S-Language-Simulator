@@ -21,7 +21,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
 public class ApplyFunction extends AbstractSyntheticInstruction {
 
-    private static final String FUNCTION_STRUCTURE_REGEX = "\\(([-!<>=_#$%^&A-Za-z0-9]+)((?:,([^,()]+|\\((?:[^()]+|\\([^()]*\\))*\\)))+)\\)";
+    private static final String FUNCTION_STRUCTURE_REGEX = "\\(([-!<>=_#$%^|&A-Za-z0-9]+)((?:,([^,()]+|\\((?:[^()]+|\\([^()]*\\))*\\)))+)\\)";
     private static final Pattern FUNCTION_STRUCTURE_PATTERN = Pattern.compile(FUNCTION_STRUCTURE_REGEX);
     private static final String FUNCTION_ARGUMENTS_REGEX = ",([^,()]+|\\((?:[^()]+|\\([^()]*\\))*\\))";
     private static final Pattern FUNCTION_ARGUMENTS_PATTERN = Pattern.compile(FUNCTION_ARGUMENTS_REGEX);

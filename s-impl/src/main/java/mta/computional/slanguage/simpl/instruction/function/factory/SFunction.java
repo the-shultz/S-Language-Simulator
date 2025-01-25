@@ -51,5 +51,11 @@ public enum SFunction {
             return "&&";
         }
     },
+    OR {
+        @Override
+        public String toString() {
+            return "||";
+        }
+    }
 
 }
