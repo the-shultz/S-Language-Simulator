@@ -73,7 +73,7 @@ public class RemainingFunction extends SProgramImpl {
                                 CONST.toString(), FunctionFactory.createConstFunction(0),
                                 NOT.toString(), FunctionFactory.createFunction(NOT)
                         ))
-                        .sourceFunctionInputs(List.of("(>=," + remaining+ ",x2)","(!,(==," + remaining + ",(CONST,x2)))"))
+                        .sourceFunctionInputs(List.of("(>=," + remaining+ ",x2)","(!,(==," + remaining + ",(CONST)))"))
                         .build())
                 .build();
 

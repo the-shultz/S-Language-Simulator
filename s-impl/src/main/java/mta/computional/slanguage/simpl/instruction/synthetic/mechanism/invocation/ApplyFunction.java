@@ -21,7 +21,7 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
 public class ApplyFunction extends AbstractSyntheticInstruction {
 
-    private static final String FUNCTION_STRUCTURE_REGEX = "\\(([-!<>=_/#$%^|&A-Za-z0-9]+)((?:,([^,()]+|\\((?:[^()]+|\\([^()]*\\))*\\)))+)\\)";
+    private static final String FUNCTION_STRUCTURE_REGEX = "\\(([-!<>=_/#$%^|&A-Za-z0-9]+)((?:,([^,()]+|\\((?:[^()]+|\\([^()]*\\))*\\)))+)*\\)";
     private static final Pattern FUNCTION_STRUCTURE_PATTERN = Pattern.compile(FUNCTION_STRUCTURE_REGEX);
     private static final String FUNCTION_ARGUMENTS_REGEX = ",([^,()]+|\\((?:[^()]+|\\([^()]*\\))*\\))";
     private static final Pattern FUNCTION_ARGUMENTS_PATTERN = Pattern.compile(FUNCTION_ARGUMENTS_REGEX);
@@ -242,12 +242,12 @@ public class ApplyFunction extends AbstractSyntheticInstruction {
             functionParts.add(matcher.group(1));
 
             String arguments = matcher.group(2);
-            Matcher argMatcher = FUNCTION_ARGUMENTS_PATTERN.matcher(arguments);
+            if (arguments != null && !arguments.isEmpty()) {
+                Matcher argMatcher = FUNCTION_ARGUMENTS_PATTERN.matcher(arguments);
 
-            int argIndex = 1;
-            while (argMatcher.find()) {
-                functionParts.add(argMatcher.group(1).trim());
-                argIndex++;
+                while (argMatcher.find()) {
+                    functionParts.add(argMatcher.group(1).trim());
+                }
             }
         }
 
