@@ -1090,6 +1090,86 @@ public class FunctionsTest {
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
     }
 
+    @Test
+    @DisplayName("compound predicates")
+    void compoundPredicates() {
+        /*
+            !x1 && (x2 || (x3 && !x4)
+            it will be true when:
+            x1=0
+            x2=1|0
+            x3=0|1
+            x4=1|0
+        */
+        SProgram program = SComponentFactory.createEmptyProgram("Boolean Expression");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(AND.toString())
+                        .functionsImplementations(Map.of(
+                                AND.toString(), FunctionFactory.createFunction(AND),
+                                OR.toString(), FunctionFactory.createFunction(OR),
+                                NOT.toString(), FunctionFactory.createFunction(NOT)
+                        ))
+                        .sourceFunctionInputs(List.of("(!,x1)","(||,x2,(&&,x3,(!,x4)))"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+        SProgram expandedProgram = performExpansion(program);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 0, 1, 0, 1);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 1L,
+                "x1", 0L,
+                "x2", 1L,
+                "x3", 0L,
+                "x4", 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 1, 0, 1);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 0, 0, 1, 0);
+        expectedSnapshot = Map.of(
+                "y", 1L,
+                "x1", 0L,
+                "x2", 0L,
+                "x3", 1L,
+                "x4", 0L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 0, 1, 0);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 1, 1, 1, 1);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 1L,
+                "x2", 1L,
+                "x3", 1L,
+                "x4", 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 1, 1, 1, 1);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 0, 0, 0, 1);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 0L,
+                "x2", 0L,
+                "x3", 0L,
+                "x4", 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 0, 0, 1);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+    }
+
     private SProgram performExpansion(SProgram program) {
         return performExpansion(program, EXPANSION_DEGREE);
     }
