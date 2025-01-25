@@ -510,6 +510,67 @@ public class FunctionsTest {
     }
 
     @Test
+    @DisplayName("div function")
+    void divFunction() {
+        SProgram program = SComponentFactory.createEmptyProgram("Divide");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(DIV.toString())
+                        .functionsImplementations(Map.of(
+                                DIV.toString(), FunctionFactory.createFunction(DIV)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program, 1);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 6, 3);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 2L,
+                "x1", 6L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 6, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 5, 3);
+        expectedSnapshot = Map.of(
+                "y", 1L,
+                "x1", 5L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 5, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 5, 6);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 5L,
+                "x2", 6L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 5, 6);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 5, 0);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 5L,
+                "x2", 0L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 5, 0);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
     @DisplayName("complex program with multiple functions")
     void complexProgramWithMultipleFunctions() {
 
