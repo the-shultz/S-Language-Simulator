@@ -10,36 +10,21 @@ import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 
 public class AndFunction extends SProgramImpl {
 
-    private final AdditionalArguments.FunctionCallData leftPredicate;
-    private final AdditionalArguments.FunctionCallData rightPredicate;
-
-    public AndFunction(AdditionalArguments.FunctionCallData leftPredicate, AdditionalArguments.FunctionCallData rightPredicate) {
+    public AndFunction() {
         super(AND.toString());
-
-        this.leftPredicate = leftPredicate;
-        this.rightPredicate = rightPredicate;
-
-        String leftPredicateValue = createFreeWorkingVariable();
-        addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, leftPredicateValue, AdditionalArguments.builder().functionCallData(leftPredicate).build()));
-
-        String rightPredicateValue = createFreeWorkingVariable();
-        addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, rightPredicateValue, AdditionalArguments.builder().functionCallData(rightPredicate).build()));
 
         addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, "y"));
 
         AdditionalArguments JZArgs = AdditionalArguments.builder().jumpZeroLabel(EXIT).build();
-        addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_ZERO, leftPredicateValue, JZArgs));
-        addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_ZERO, rightPredicateValue, JZArgs));
+        addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_ZERO, "x1", JZArgs));
+        addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_ZERO, "x2", JZArgs));
         addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y"));
 
     }
 
     @Override
     public String getName() {
-        return extractPredicateString(leftPredicate) + " " + super.getName() + " " + extractPredicateString(rightPredicate);
+        return "x1 " + super.getName() + " x2";
     }
 
-    private String extractPredicateString(AdditionalArguments.FunctionCallData predicate) {
-        return predicate.getSourceFunctionName() + "(" + String.join(",", predicate.getSourceFunctionInputs()) + ")";
-    }
 }

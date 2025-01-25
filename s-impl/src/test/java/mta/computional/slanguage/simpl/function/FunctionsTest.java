@@ -971,28 +971,12 @@ public class FunctionsTest {
         // should return true when x1==0 && x2==0
         SProgram program = SComponentFactory.createEmptyProgram("AND");
 
-        AdditionalArguments.FunctionCallData firstPredicate = AdditionalArguments.FunctionCallData.builder()
-                .sourceFunctionName(NOT.toString())
-                .functionsImplementations(Map.of(
-                        NOT.toString(), FunctionFactory.createFunction(NOT)
-                ))
-                .sourceFunctionInputs(List.of("x1"))
-                .build();
-
-        AdditionalArguments.FunctionCallData secondPredicate = AdditionalArguments.FunctionCallData.builder()
-                .sourceFunctionName(NOT.toString())
-                .functionsImplementations(Map.of(
-                        NOT.toString(), FunctionFactory.createFunction(NOT)
-                ))
-                .sourceFunctionInputs(List.of("x2"))
-                .build();
-
         AdditionalArguments additionalArguments = AdditionalArguments
                 .builder()
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
                         .sourceFunctionName(AND.toString())
                         .functionsImplementations(Map.of(
-                                AND.toString(), FunctionFactory.createAndFunction(firstPredicate, secondPredicate)
+                                AND.toString(), FunctionFactory.createFunction(AND)
                         ))
                         .sourceFunctionInputs(List.of("x1","x2"))
                         .build())
@@ -1004,7 +988,7 @@ public class FunctionsTest {
 
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 0, 0);
         Map<String, Long> expectedSnapshot = Map.of(
-                "y", 1L,
+                "y", 0L,
                 "x1", 0L,
                 "x2", 0L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
@@ -1034,7 +1018,7 @@ public class FunctionsTest {
 
         originalExecutionSnapshot = executeProgram(program, 1, 1);
         expectedSnapshot = Map.of(
-                "y", 0L,
+                "y", 1L,
                 "x1", 1L,
                 "x2", 1L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));

@@ -20,6 +20,7 @@ public class FunctionFactory {
             case MULTIPLY -> new MultiplyFunction();
             case NOT -> new NotFunction();
             case OR -> new OrFunction();
+            case AND -> new AndFunction();
             case SMALLER_EQUAL_THAN -> new SmallerEqualThanFunction();
             default -> throw new IllegalStateException("Unexpected value: " + functionName);
         };
@@ -31,10 +32,6 @@ public class FunctionFactory {
 
     public static SProgram createConstFunction(int constant) {
         return new ConstFunction(constant);
-    }
-
-    public static SProgram createAndFunction(AdditionalArguments.FunctionCallData leftPredicate, AdditionalArguments.FunctionCallData rightPredicate) {
-        return new AndFunction(leftPredicate, rightPredicate);
     }
 
 }
