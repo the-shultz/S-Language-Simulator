@@ -56,6 +56,12 @@ public enum SFunction {
         public String toString() {
             return "||";
         }
-    }
+    },
+    EQUALITY {
+        @Override
+        public String toString() {
+            return "==";
+        }
+    },
 
 }

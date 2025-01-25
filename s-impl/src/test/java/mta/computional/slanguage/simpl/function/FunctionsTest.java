@@ -1091,6 +1091,68 @@ public class FunctionsTest {
     }
 
     @Test
+    @DisplayName("equality predicate")
+    void equalityPredicate() {
+        SProgram program = SComponentFactory.createEmptyProgram("Equality");
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(EQUALITY.toString())
+                        .functionsImplementations(Map.of(
+                                EQUALITY.toString(), FunctionFactory.createFunction(EQUALITY)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+        SProgram expandedProgram = performExpansion(program, 1);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 0, 0);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 1L,
+                "x1", 0L,
+                "x2", 0L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 0);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 2, 3);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 2L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 2, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 2);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 3L,
+                "x2", 2L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 2);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 3);
+        expectedSnapshot = Map.of(
+                "y", 1L,
+                "x1", 3L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 3);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+    }
+
+    @Test
     @DisplayName("compound predicates")
     void compoundPredicates() {
         /*
