@@ -51,6 +51,18 @@ public enum SFunction {
             return "<";
         }
     },
+    BIGGER_EQUAL_THAN {
+        @Override
+        public String toString() {
+            return ">=";
+        }
+    },
+    BIGGER_THAN {
+        @Override
+        public String toString() {
+            return ">";
+        }
+    },
     AND {
         @Override
         public String toString() {

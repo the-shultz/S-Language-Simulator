@@ -21,6 +21,8 @@ public class FunctionFactory {
             case EQUALITY -> new EqualityFunction();
             case SMALLER_EQUAL_THAN -> new SmallerEqualThanFunction();
             case SMALLER_THAN -> new SmallerThanFunction();
+            case BIGGER_EQUAL_THAN -> new BiggerEqualThanFunction();
+            case BIGGER_THAN -> new BiggerThanFunction();
             default -> throw new IllegalStateException("Unexpected value: " + functionName);
         };
     }
