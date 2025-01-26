@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.*;
+import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FunctionsTest {
 
@@ -397,6 +397,50 @@ public class FunctionsTest {
 
         Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 7, 3);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
+
+    @Test
+    @DisplayName("Add for testing ex1")
+    void addForTestingEx1() {
+
+        SProgram program = SComponentFactory.createEmptyProgram("Plus");
+        Label A = SComponentFactory.createLabel("L1");
+        Label B = SComponentFactory.createLabel("L2");
+        Label C = SComponentFactory.createLabel("L3");
+
+        String z1 = "z1";
+        String z2 = "z2";
+        String z3 = "z3";
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z1, AdditionalArguments.builder().assignedVariableName("x1").build()));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z2, AdditionalArguments.builder().assignedVariableName("x2").build()));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(C, SInstructionRegistry.JUMP_NOT_ZERO, z1, AdditionalArguments.builder().jumpNotZeroLabel(A).build()));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, z2, AdditionalArguments.builder().jumpNotZeroLabel(B).build()));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, z3));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, z3, AdditionalArguments.builder().jumpNotZeroLabel(EXIT).build()));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(A, SInstructionRegistry.DECREASE, z1));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y"));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, z1, AdditionalArguments.builder().jumpNotZeroLabel(A).build()));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.GOTO_LABEL, "", AdditionalArguments.builder().gotoLabel(C).build()));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(B, SInstructionRegistry.DECREASE, z2));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.INCREASE, "y"));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.JUMP_NOT_ZERO, z2, AdditionalArguments.builder().jumpNotZeroLabel(B).build()));
+
+        System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program, 2);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3, 4, 5);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 7L,
+                "x1", 3L,
+                "x2", 4L,
+                "x3", 5L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 4, 5);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
     }
 
     @Test
