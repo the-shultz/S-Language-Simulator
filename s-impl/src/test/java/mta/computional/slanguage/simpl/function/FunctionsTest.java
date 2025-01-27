@@ -19,6 +19,7 @@ import java.util.Map;
 import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.*;
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EXIT;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FunctionsTest {
 
@@ -439,6 +440,72 @@ public class FunctionsTest {
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
         Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 4, 5);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+    }
+
+    @Test
+    @DisplayName("multiply for testing ex2")
+    void multiplyForTestingEx2() {
+        SProgram program = SComponentFactory.createEmptyProgram("Plus");
+        Label A = SComponentFactory.createLabel("L1");
+
+        String z2 = "z2";
+
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .jumpZeroLabel(EXIT)
+                .assignedVariableName("x2")
+                .gotoLabel(A)
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(SFunction.ADD.toString())
+                        .functionsImplementations(Map.of(
+                                SFunction.ADD.toString(), FunctionFactory.createFunction(SFunction.ADD)
+                        ))
+                        .sourceFunctionInputs(List.of("y","x1"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ZERO_VARIABLE, "y"));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.ASSIGNMENT, z2, additionalArguments));
+        program.addInstruction(SComponentFactory.createInstructionWithLabel(A, SInstructionRegistry.JUMP_ZERO, z2, additionalArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.APPLY_FUNCTION, "y", additionalArguments));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.DECREASE, z2));
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.GOTO_LABEL, "", additionalArguments));
+
+        System.out.println(program.toVerboseString());
+
+        SProgram expandedProgram = performExpansion(program, 3);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3, 4, 5);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 12L,
+                "x1", 3L,
+                "x2", 4L,
+                "x3", 5L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 4, 5);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 3, 0);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 3L,
+                "x2", 0L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 0);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 0, 3);
+        expectedSnapshot = Map.of(
+                "y", 0L,
+                "x1", 0L,
+                "x2", 3L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+        expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 3);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
     }
