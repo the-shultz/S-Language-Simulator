@@ -1618,7 +1618,45 @@ public class FunctionsTest {
 
         expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 0, 0, 1);
         assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+    }
 
+    @Test
+    @DisplayName("Sum")
+    void sum() {
+        SProgram program = SComponentFactory.createEmptyProgram("Sum");
+
+        // Add(0,1) = 1 + Add(1,1) = 2 + Add(2,1) = 3 + Add(3,1) = 4  ==> 10
+        AdditionalArguments additionalArguments = AdditionalArguments
+                .builder()
+                .functionCallData(AdditionalArguments.FunctionCallData.builder()
+                        .sourceFunctionName(ADD.toString())
+                        .functionsImplementations(Map.of(
+                                ADD.toString(), FunctionFactory.createFunction(ADD)
+                        ))
+                        .sourceFunctionInputs(List.of("x1","x2"))
+                        .build())
+                .build();
+
+        program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.SUM, "y", additionalArguments));
+        System.out.println(program.toVerboseString());
+        //SProgram expandedProgram = performExpansion(program);
+
+        Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3, 1);
+        Map<String, Long> expectedSnapshot = Map.of(
+                "y", 10L,
+                "x1", 3L,
+                "x2", 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
+
+//        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 1, 0, 1);
+//        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+
+        originalExecutionSnapshot = executeProgram(program, 0, 1);
+        expectedSnapshot = Map.of(
+                "y", 1L,
+                "x1", 0L,
+                "x2", 1L);
+        assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
     }
 
     private SProgram performExpansion(SProgram program) {

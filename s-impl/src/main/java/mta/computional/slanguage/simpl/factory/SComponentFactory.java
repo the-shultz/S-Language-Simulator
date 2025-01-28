@@ -9,6 +9,7 @@ import mta.computional.slanguage.simpl.instruction.basic.impl.Neutral;
 import mta.computional.slanguage.simpl.instruction.synthetic.mechanism.invocation.ApplyFunction;
 import mta.computional.slanguage.simpl.instruction.synthetic.impl.*;
 import mta.computional.slanguage.simpl.instruction.synthetic.mechanism.recursion.Recursion;
+import mta.computional.slanguage.simpl.instruction.synthetic.mechanism.sum.Sum;
 import mta.computional.slanguage.simpl.label.LabelImpl;
 import mta.computional.slanguage.simpl.program.SProgramImpl;
 import mta.computional.slanguage.simpl.program.SProgramRunnerImpl;
@@ -45,6 +46,7 @@ public interface SComponentFactory {
             case JUMP_EQUAL_FUNCTION -> new JumpFunctionEquality(variableName, additionalArguments.getJumpFunctionEqualityLabel(), additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
             case APPLY_FUNCTION -> new ApplyFunction(variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
             case RECURSION -> new Recursion(variableName, additionalArguments.getRecursiveData().getBreakingCondition(), additionalArguments.getRecursiveData().getStepFunction(), additionalArguments.getRecursiveData().getNativeInputs(), additionalArguments.getRecursiveData().getRecursiveArgument());
+            case SUM -> new Sum(variableName, additionalArguments.getFunctionCallData());
         };
     }
 
@@ -68,6 +70,7 @@ public interface SComponentFactory {
             case JUMP_EQUAL_FUNCTION -> new JumpFunctionEquality(instructionLabel, variableName, additionalArguments.getJumpFunctionEqualityLabel(), additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
             case APPLY_FUNCTION -> new ApplyFunction(instructionLabel, variableName, additionalArguments.getFunctionCallData().getSourceFunctionName(), additionalArguments.getFunctionCallData().getFunctionsImplementations(), additionalArguments.getFunctionCallData().getSourceFunctionInputs());
             case RECURSION -> new Recursion(instructionLabel, variableName, additionalArguments.getRecursiveData().getBreakingCondition(), additionalArguments.getRecursiveData().getStepFunction(), additionalArguments.getRecursiveData().getNativeInputs(), additionalArguments.getRecursiveData().getRecursiveArgument());
+            case SUM -> new Sum(instructionLabel, variableName, additionalArguments.getFunctionCallData());
         };
     }
 

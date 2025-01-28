@@ -93,5 +93,10 @@ public enum SFunction {
             return "==";
         }
     },
-
+    SUM {
+        @Override
+        public String toString() {
+            return "SUM";
+        }
+    },
 }
