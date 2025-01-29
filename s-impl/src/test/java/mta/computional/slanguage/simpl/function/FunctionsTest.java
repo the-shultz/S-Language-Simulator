@@ -1647,7 +1647,7 @@ public class FunctionsTest {
 
         program.addInstruction(SComponentFactory.createInstruction(SInstructionRegistry.SUM, "y", additionalArguments));
         System.out.println(program.toVerboseString());
-        //SProgram expandedProgram = performExpansion(program);
+        SProgram expandedProgram = performExpansion(program, 1);
 
         Map<String, Long> originalExecutionSnapshot = executeProgram(program, 3, 1);
         Map<String, Long> expectedSnapshot = Map.of(
@@ -1656,8 +1656,8 @@ public class FunctionsTest {
                 "x2", 1L);
         assertTrue(isMapContained(expectedSnapshot, originalExecutionSnapshot));
 
-//        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 0, 1, 0, 1);
-//        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
+        Map<String, Long> expandedExecutionSnapshot = executeProgram(expandedProgram, 3, 1);
+        assertTrue(isMapContained(originalExecutionSnapshot, expandedExecutionSnapshot));
 
         originalExecutionSnapshot = executeProgram(program, 0, 1);
         expectedSnapshot = Map.of(
