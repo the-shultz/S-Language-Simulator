@@ -22,7 +22,8 @@ public enum SInstructionRegistry {
     // MECHANISM
     APPLY_FUNCTION("Apply Function"),
     RECURSION("Recursion"),
-    SUM("Sum");
+    SUM("Sum"),
+    PRODUCT("Product");
 
     private final String name;
 

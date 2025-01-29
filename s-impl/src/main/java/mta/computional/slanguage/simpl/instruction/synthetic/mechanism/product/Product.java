@@ -1,9 +1,8 @@
-package mta.computional.slanguage.simpl.instruction.synthetic.mechanism.sum;
+package mta.computional.slanguage.simpl.instruction.synthetic.mechanism.product;
 
 import mta.computional.slanguage.simpl.factory.AdditionalArguments;
 import mta.computional.slanguage.simpl.factory.SComponentFactory;
 import mta.computional.slanguage.simpl.instruction.function.factory.FunctionFactory;
-import mta.computional.slanguage.simpl.instruction.function.factory.SFunction;
 import mta.computional.slanguage.simpl.instruction.synthetic.AbstractSyntheticInstruction;
 import mta.computional.slanguage.smodel.api.instruction.SInstruction;
 import mta.computional.slanguage.smodel.api.label.Label;
@@ -18,26 +17,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.*;
+import static mta.computional.slanguage.simpl.instruction.SInstructionRegistry.JUMP_NOT_ZERO;
 import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.ADD;
 import static mta.computional.slanguage.simpl.instruction.function.factory.SFunction.MULTIPLY;
 import static mta.computional.slanguage.smodel.api.label.ConstantLabel.EMPTY;
 
-public class Sum extends AbstractSyntheticInstruction {
+public class Product extends AbstractSyntheticInstruction {
 
     private final AdditionalArguments.FunctionCallData functionToInvoke;
 
-    public Sum(String variableName, AdditionalArguments.FunctionCallData functionToInvoke) {
+    public Product(String variableName, AdditionalArguments.FunctionCallData functionToInvoke) {
         this(EMPTY, variableName, functionToInvoke);
     }
 
-    public Sum(Label label, String variableName, AdditionalArguments.FunctionCallData functionToInvoke) {
+    public Product(Label label, String variableName, AdditionalArguments.FunctionCallData functionToInvoke) {
         super(label, variableName);
         this.functionToInvoke = functionToInvoke;
     }
 
     @Override
     protected List<SInstruction> internalExpand(ProgramActions context) {
-
         Label L1 = context.createAvailableLabel();
         String counter = context.createFreeWorkingVariable();
         String total = context.createFreeWorkingVariable();
@@ -48,19 +47,21 @@ public class Sum extends AbstractSyntheticInstruction {
         String functionInvocationTemplate = String.format("(%s,%s)", functionToInvoke.getSourceFunctionName(), functionInputs);
 
         HashMap<String, SProgram> usedFunctions = new HashMap<>(functionToInvoke.getFunctionsImplementations());
-        usedFunctions.put(ADD.toString(), FunctionFactory.createFunction(ADD));
+        usedFunctions.put(MULTIPLY.toString(), FunctionFactory.createFunction(MULTIPLY));
 
-        AdditionalArguments sumFunction = AdditionalArguments.builder()
+        AdditionalArguments multiplyFunction = AdditionalArguments.builder()
                 .functionCallData(AdditionalArguments.FunctionCallData.builder()
-                        .sourceFunctionName(ADD.toString())
+                        .sourceFunctionName(MULTIPLY.toString())
                         .functionsImplementations(usedFunctions)
                         .sourceFunctionInputs(List.of("y", functionInvocationTemplate))
                         .build())
                 .build();
+
         return List.of(
                 SComponentFactory.createInstruction(ASSIGNMENT, total, AdditionalArguments.builder().assignedVariableName("x1").build()),
                 SComponentFactory.createInstruction(INCREASE, total), // to include also running on t = 0
-                SComponentFactory.createInstructionWithLabel(L1, APPLY_FUNCTION, "y", sumFunction),
+                SComponentFactory.createInstruction(INCREASE, "y"), // y needs to start from 1 due to the multiplication
+                SComponentFactory.createInstructionWithLabel(L1, APPLY_FUNCTION, "y", multiplyFunction),
                 SComponentFactory.createInstruction(INCREASE, counter),
                 SComponentFactory.createInstruction(DECREASE, total),
                 SComponentFactory.createInstruction(JUMP_NOT_ZERO, total, AdditionalArguments.builder().jumpNotZeroLabel(L1).build())
@@ -71,12 +72,12 @@ public class Sum extends AbstractSyntheticInstruction {
     protected String internalToVerboseString() {
         List<String> sourceFunctionInputs = new ArrayList<>(functionToInvoke.getSourceFunctionInputs());
         sourceFunctionInputs.set(0, "t");
-        return "SUM[t:0->x1]: " + functionToInvoke.getSourceFunctionName() + "(" + String.join(",", sourceFunctionInputs) +")";
+        return "PRODUCT[t:0->x1]: " + functionToInvoke.getSourceFunctionName() + "(" + String.join(",", sourceFunctionInputs) +")";
     }
 
     @Override
     public String getName() {
-        return SUM.getName();
+        return PRODUCT.getName();
     }
 
     @Override
@@ -86,13 +87,12 @@ public class Sum extends AbstractSyntheticInstruction {
 
     @Override
     public Label execute(ExecutionContext context) {
-
-        SProgram program = SComponentFactory.createEmptyProgram("Sum-Function-Wrapper");
+        SProgram program = SComponentFactory.createEmptyProgram("Product-Function-Wrapper");
         program.addInstruction(SComponentFactory.createInstruction(APPLY_FUNCTION, "y", AdditionalArguments.builder().functionCallData(functionToInvoke).build()));
 
         long limit = context.getVariable("x1");
         long counter = 0;
-        long sum = 0;
+        long sum = 1;
 
         List<Long> functionInputs = functionToInvoke
                 .getSourceFunctionInputs()
@@ -103,11 +103,12 @@ public class Sum extends AbstractSyntheticInstruction {
         do {
             functionInputs.set(0, counter);
             long result = SComponentFactory.createProgramRunner(program).run(functionInputs.toArray(new Long[0]));
-            sum += result;
+            sum *= result;
             counter++;
         } while (counter <= limit);
 
         context.updateVariable(variableName, sum);
         return EMPTY;
+
     }
 }
